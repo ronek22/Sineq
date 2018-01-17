@@ -1,6 +1,8 @@
 package com.mygdx.game.utils;
 
+import com.mygdx.game.actors.Platform;
 import com.mygdx.game.enums.EnemyType;
+import com.mygdx.game.enums.PlatformType;
 
 import java.util.Random;
 
@@ -8,6 +10,11 @@ public class RandomUtils {
 
     public static EnemyType getRandomEnemyType() {
         RandomEnum<EnemyType> randomEnum = new RandomEnum<EnemyType>(EnemyType.class);
+        return randomEnum.random();
+    }
+
+    public static PlatformType getRandomPlatformType() {
+        RandomEnum<PlatformType> randomEnum = new RandomEnum<PlatformType>(PlatformType.class);
         return randomEnum.random();
     }
 

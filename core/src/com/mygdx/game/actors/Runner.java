@@ -11,6 +11,7 @@ public class Runner extends GameActor {
 
     private boolean jumping;
     private boolean hit;
+    private boolean onPlatform;
 
     public Runner(Body body){
         super(body);
@@ -41,5 +42,15 @@ public class Runner extends GameActor {
     public boolean isHit() {
         return hit;
     }
+
+
+    public void platform(){
+        onPlatform = true;
+    }
+
+    public boolean isOnPlatform() { return onPlatform; }
+
+
+
 
 }

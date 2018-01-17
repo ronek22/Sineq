@@ -7,13 +7,18 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.screens.GameScreen;
+import com.mygdx.game.screens.Menu;
 
 public class GameMain extends Game {
 
-	
+	public SpriteBatch batch;
 	@Override
 	public void create () {
-		setScreen(new GameScreen());
+		batch = new SpriteBatch();
+		this.setScreen(new Menu(this));
 	}
 
+	public void render(){
+		super.render();
+	}
 }
