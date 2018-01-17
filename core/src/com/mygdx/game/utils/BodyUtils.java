@@ -17,6 +17,8 @@ public class BodyUtils {
             case RUNNER:
             case ENEMY:
                 return body.getPosition().x + userData.getWidth() / 2 > 0;
+            case PLATFORM:
+                return body.getPosition().x + userData.getWidth() / 2 > 0;
         }
 
         return true;
@@ -38,6 +40,12 @@ public class BodyUtils {
         UserData userData = (UserData) body.getUserData();
 
         return userData != null && userData.getUserDataType() == UserDataType.ENEMY;
+    }
+
+    public static boolean bodyIsPlatform(Body body){
+        UserData userData = (UserData) body.getUserData();
+
+        return userData != null && userData.getUserDataType() == UserDataType.PLATFORM;
     }
 
 }

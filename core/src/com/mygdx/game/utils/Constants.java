@@ -33,8 +33,13 @@ public class Constants {
     public static final float RUNNING_LONG_ENEMY_Y = 2f;
     public static final float FLYING_ENEMY_Y = 3f;
     public static final Vector2 ENEMY_LINEAR_VELOCITY = new Vector2(-10f, 0);
-
     public static final float RUNNER_HIT_ANGULAR_IMPULSE = 10f;
+
+    public static final float PLATFORM_X = 27f;
+    public static final float PLATFORM_Y = 2f;
+    public static final float PLATFORM_DENSITY = 0f;
+    public static final float PLATFORM_FRICTION = 0f;
+    public static final Vector2 PLATFORM_LINEAR_VELOCITY = new Vector2(-10f, 0);
 
 
 }
