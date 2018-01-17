@@ -22,8 +22,11 @@ public class Menu implements Screen{
 
     public Menu(GameMain game){
 
-    this.game = game;
-    playButtonActive = new Texture("play.png");
+        this.game = game;
+        playButtonActive = new Texture("play.png");
+        playButtonInactive = new Texture("play2.png");
+        exitButtonActive = new Texture("exit.png");
+        exitButtonInactive = new Texture("exit2.png");
     }
 
     @Override
@@ -31,11 +34,27 @@ public class Menu implements Screen{
 
     }
 
+
     @Override
     public void render(float delta) {
         game.batch.begin();
 
-        game.batch.draw(playButtonActive, 100, 100);
+        if(Gdx.input.getX() < 50 + 200 && Gdx.input.getX() > 50 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
+            game.batch.draw(playButtonActive, 50, 200);
+            if(Gdx.input.isTouched()) {
+                game.setScreen(new GameScreen());
+            }
+        }else {
+            game.batch.draw(playButtonInactive, 50, 200);
+        }
+        if(Gdx.input.getX() < 550 + 200 && Gdx.input.getX() > 550 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
+            game.batch.draw(exitButtonActive, 550, 200);
+            if(Gdx.input.isTouched()) {
+                Gdx.app.exit();
+            }
+        }else {
+            game.batch.draw(exitButtonInactive, 550, 200);
+        }
         game.batch.end();
 
     }

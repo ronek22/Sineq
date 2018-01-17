@@ -18,7 +18,7 @@ public class GameMain extends Game {
 		this.setScreen(new Menu(this));
 	}
 
-		public void render(){
-			super.render();
-		}
+	public void render(){
+		super.render();
+	}
 }
