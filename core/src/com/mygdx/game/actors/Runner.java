@@ -10,6 +10,7 @@ import com.mygdx.game.physics.RunnerUserData;
 public class Runner extends GameActor {
 
     private boolean jumping;
+    private boolean hit;
 
     public Runner(Body body){
         super(body);
@@ -30,4 +31,15 @@ public class Runner extends GameActor {
     public void landed() {
         jumping = false;
     }
+
+
+    public void hit() {
+        body.applyAngularImpulse(getUserData().getHitAngularImpulse(), true);
+        hit = true;
+    }
+
+    public boolean isHit() {
+        return hit;
+    }
+
 }
