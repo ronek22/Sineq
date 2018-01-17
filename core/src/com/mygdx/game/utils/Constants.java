@@ -27,6 +27,9 @@ public class Constants {
     public static final float RUNNER_GRAVITY_SCALE = 5f; // thanks to that, runner fall faster
     public static final Vector2 RUNNER_JUMPING_LINEAR_IMPULSE = new Vector2(0, 17f);
 
+    public static final Vector2 RUNNER_MOVING_RIGHT_LINEAR_IMPULSE = new Vector2(7, 0);
+    public static final Vector2 RUNNER_MOVING_LEFT_LINEAR_IMPULSE = new Vector2(-7, 0);
+
     public static final float ENEMY_X = 25f;
     public static final float ENEMY_DENSITY = RUNNER_DENSITY;
     public static final float RUNNING_SHORT_ENEMY_Y = 1.5f;

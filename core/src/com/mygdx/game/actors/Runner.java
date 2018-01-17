@@ -12,6 +12,7 @@ public class Runner extends GameActor {
     private boolean jumping;
     private boolean hit;
     private boolean onPlatform;
+    private boolean moving;
 
     public Runner(Body body){
         super(body);
@@ -22,10 +23,28 @@ public class Runner extends GameActor {
         return (RunnerUserData) userData;
     }
 
+    //TODO zabezpieczyć inaczej to skakanie podczas ruchu
+
     public void jump() {
-        if(!jumping){
+        if(!jumping && (body.getPosition().x == 2 || (body.getPosition().x > 4.43 && body.getPosition().x < 4.44))){
             body.applyLinearImpulse(getUserData().getJumpingLinearImpulse(), body.getWorldCenter(), true);
             jumping = true;
+        }
+    }
+
+    public void move() {
+        if(!moving){
+            if( body.getPosition().x == 2 ) {
+                body.applyLinearImpulse(getUserData().getMoveRightLinearImpulse(), body.getWorldCenter(), true);
+                moving = true;
+            }
+
+        }
+        else{
+            if( body.getPosition().x > 4.43 && body.getPosition().x < 4.44 ) {
+                body.applyLinearImpulse(getUserData().getMoveLeftLinearImpulse(), body.getWorldCenter(), true);
+                moving = false;
+            }
         }
     }
 

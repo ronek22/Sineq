@@ -10,15 +10,25 @@ import com.mygdx.game.utils.Constants;
 
 public class RunnerUserData extends UserData {
     private Vector2 jumpingLinearImpulse;
+    private Vector2 movingRightLinearImpulse;
+    private Vector2 movingLeftLinearImpulse;
 
     public RunnerUserData(float width, float height) {
         super(width, height);
         jumpingLinearImpulse = Constants.RUNNER_JUMPING_LINEAR_IMPULSE;
+        movingRightLinearImpulse = Constants.RUNNER_MOVING_RIGHT_LINEAR_IMPULSE;
+        movingLeftLinearImpulse = Constants.RUNNER_MOVING_LEFT_LINEAR_IMPULSE;
         userDataType = UserDataType.RUNNER;
     }
 
     public Vector2 getJumpingLinearImpulse() {
         return jumpingLinearImpulse;
+    }
+    public Vector2 getMoveRightLinearImpulse() {
+        return movingRightLinearImpulse;
+    }
+    public Vector2 getMoveLeftLinearImpulse() {
+        return movingLeftLinearImpulse;
     }
 
     public void setJumpingLinearImpulse(Vector2 jumpingLinearImpulse){

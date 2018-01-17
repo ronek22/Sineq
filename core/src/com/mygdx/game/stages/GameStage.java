@@ -19,6 +19,9 @@ import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Vector2;
+
+
 
 
 public class GameStage extends Stage implements ContactListener {
@@ -39,6 +42,7 @@ public class GameStage extends Stage implements ContactListener {
 
     // for controls
     private Rectangle screenRightSide;
+    private Rectangle screenLeftSide;
     private Vector3 touchPoint;
 
     public GameStage() {
@@ -54,7 +58,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpGround();
         setUpRunner();
 //        createEnemy();
-        createPlatform();
+//       createPlatform();
     }
 
     private void setUpGround() {
@@ -75,6 +79,7 @@ public class GameStage extends Stage implements ContactListener {
 
     private void setupTouchControlAreas() {
         touchPoint = new Vector3();
+        screenLeftSide = new Rectangle(0, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
         screenRightSide = new Rectangle(getCamera().viewportWidth / 2, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
         Gdx.input.setInputProcessor(this);
     }
@@ -111,6 +116,8 @@ public class GameStage extends Stage implements ContactListener {
             }
             world.destroyBody(body);
         }
+
+        Gdx.app.log("test", new Float(body.getPosition().x).toString() );
     }
 
     private void createEnemy() {
@@ -137,12 +144,18 @@ public class GameStage extends Stage implements ContactListener {
         if (rightSideTouched(touchPoint.x, touchPoint.y)) {
             runner.jump();
         }
+        else if (leftSideTouched(touchPoint.x, touchPoint.y)) {
+            runner.move();
+        }
 
         return super.touchDown(x, y, pointer, button);
     }
 
     private boolean rightSideTouched(float x, float y) {
         return screenRightSide.contains(x, y);
+    }
+    private boolean leftSideTouched(float x, float y) {
+        return screenLeftSide.contains(x, y);
     }
 
     private void translateScreenToWorldCoordinates(int x, int y) {
