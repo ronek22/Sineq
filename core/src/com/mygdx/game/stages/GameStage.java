@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.mygdx.game.actors.Ground;
+import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
 import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.WorldUtils;
@@ -52,7 +53,8 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
-        createEnemy();
+//        createEnemy();
+        createPlatform();
     }
 
     private void setUpGround() {
@@ -104,6 +106,8 @@ public class GameStage extends Stage implements ContactListener {
         if (!BodyUtils.bodyInBounds(body)) {
             if (BodyUtils.bodyIsEnemy(body) && !runner.isHit()) {
                 createEnemy();
+            } else if (BodyUtils.bodyIsPlatform(body) && !runner.isOnPlatform()){
+                createPlatform();
             }
             world.destroyBody(body);
         }
@@ -112,6 +116,11 @@ public class GameStage extends Stage implements ContactListener {
     private void createEnemy() {
         Enemy enemy = new Enemy(WorldUtils.createEnemy(world));
         addActor(enemy);
+    }
+
+    private void createPlatform() {
+        Platform platform = new Platform(WorldUtils.createPlatform(world));
+        addActor(platform);
     }
 
     @Override
@@ -151,6 +160,9 @@ public class GameStage extends Stage implements ContactListener {
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
                 (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
             runner.landed();
+        } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b)) ||
+                (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
+            runner.platform();
         }
     }
 
