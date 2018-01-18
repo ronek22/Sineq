@@ -66,7 +66,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpRunner();
         createWall();
 //        createEnemy();
-        createPlatform();
+        createPlatforms();
     }
 
     private void setUpGround() {
