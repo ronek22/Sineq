@@ -25,6 +25,14 @@ public enum PlatformType {
         this.friction = friction;
     }
 
+    public void setX(float x){
+        this.x = x;
+    }
+
+    public void setY(float y){
+        this.y = y;
+    }
+
     public float getWidth() {
         return width;
     }

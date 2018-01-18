@@ -15,6 +15,7 @@ public class Runner extends GameActor {
 
     public Runner(Body body){
         super(body);
+        onPlatform = false;
     }
 
     @Override

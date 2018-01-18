@@ -106,7 +106,7 @@ public class GameStage extends Stage implements ContactListener {
         if (!BodyUtils.bodyInBounds(body)) {
             if (BodyUtils.bodyIsEnemy(body) && !runner.isHit()) {
                 createEnemy();
-            } else if (BodyUtils.bodyIsPlatform(body) && !runner.isOnPlatform()){
+            } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
                 createPlatform();
             }
             world.destroyBody(body);

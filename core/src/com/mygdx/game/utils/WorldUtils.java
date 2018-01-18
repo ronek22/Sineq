@@ -33,6 +33,7 @@ public class WorldUtils {
 
     public static Body createPlatform(World world) {
         PlatformType platformType = RandomUtils.getRandomPlatformType();
+        platformType.setY(3);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.KinematicBody;
         bodyDef.position.set(new Vector2(platformType.getX(), platformType.getY()));
@@ -46,6 +47,7 @@ public class WorldUtils {
         body.createFixture(fix);
 //        body.resetMassData();
         PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight());
+        System.out.println("PLATFORMA Y: " + body.getPosition().y);
         body.setUserData(userData);
         shape.dispose();
         return body;
