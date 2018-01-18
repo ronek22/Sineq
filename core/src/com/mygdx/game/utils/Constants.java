@@ -38,6 +38,7 @@ public class Constants {
     public static final float PLATFORM_X = 27f;
     public static final float PLATFORM_Y = 2f;
     public static final float PLATFORM_GAP = 4f;
+    public static final float PLATFORM_RAND_DIFF = 2f;
     public static final int PLATFORM_AMOUNT = 10;
     public static final float PLATFORM_DENSITY = 0f;
     public static final float PLATFORM_FRICTION = 0f;

@@ -13,7 +13,11 @@ import com.mygdx.game.physics.RunnerUserData;
 import com.mygdx.game.physics.EnemyUserData;
 import com.mygdx.game.enums.EnemyType;
 
+import java.util.Random;
+
 public class WorldUtils {
+
+    public static float LastPlatformY;
 
     public static World createWorld() {
         return new World(Constants.WORLD_GRAVITY, true);
@@ -52,7 +56,8 @@ public class WorldUtils {
         body.createFixture(fix);
 //        body.resetMassData();
         PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight());
-        System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().x + ")");
+        System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().y + ")");
+        LastPlatformY = body.getPosition().y;
         body.setUserData(userData);
         shape.dispose();
         return body;
@@ -88,6 +93,13 @@ public class WorldUtils {
         body.setUserData(userData);
         shape.dispose();
         return body;
+    }
+
+    public static float generateRandomShift(){
+        Random r = new Random();
+        float range = Constants.PLATFORM_RAND_DIFF;
+        return -range + (range + range) * r.nextFloat();
+//        return r.nextInt((Constants.PLATFORM_RAND_DIFF - -(Constants.PLATFORM_RAND_DIFF))) - Constants.PLATFORM_RAND_DIFF;
     }
 
 

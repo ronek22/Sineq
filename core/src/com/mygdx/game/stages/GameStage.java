@@ -21,6 +21,10 @@ import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Random;
+
+import static com.mygdx.game.utils.WorldUtils.LastPlatformY;
+
 
 public class GameStage extends Stage implements ContactListener {
 
@@ -42,7 +46,6 @@ public class GameStage extends Stage implements ContactListener {
     private Rectangle screenRightSide;
     private Vector3 touchPoint;
 
-    private int stan = 0;
 
     public GameStage() {
         setUpWorld();
@@ -121,14 +124,22 @@ public class GameStage extends Stage implements ContactListener {
         addActor(enemy);
     }
 
+
+
     private void createPlatforms() {
+        float randShift;
         Platform[] platforms = new Platform[Constants.PLATFORM_AMOUNT];
-        for(int i = 0; i < Constants.PLATFORM_AMOUNT; i++){
-            platforms[i] = new Platform(WorldUtils.createPlatform(world, 1f));
+        platforms[0] = new Platform(WorldUtils.createPlatform(world, 0));
+        addActor(platforms[0]);
+        for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
+
+            do { randShift = WorldUtils.generateRandomShift();
+            }while((randShift + LastPlatformY ) < 2);
+
+            platforms[i] = new Platform(WorldUtils.createPlatform(world, randShift));
             addActor(platforms[i]);
         }
-//        Platform platform = new Platform(WorldUtils.createPlatform(world, 1f));
-//        addActor(platform);
+
 
     }
 
@@ -167,13 +178,13 @@ public class GameStage extends Stage implements ContactListener {
                 (BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b))) {
             runner.hit();
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
-                (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b)) ||
-                (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsRunner(b)) ||
-                (BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b))) {
+                (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
             runner.landed();
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b)) ||
                 (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
             runner.platform();
+            runner.landed();
+            System.out.println("LANDED ON PLATFORM");
         }
     }
 

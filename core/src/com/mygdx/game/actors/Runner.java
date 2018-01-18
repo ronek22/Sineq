@@ -15,7 +15,6 @@ public class Runner extends GameActor {
 
     public Runner(Body body){
         super(body);
-        onPlatform = false;
     }
 
     @Override
@@ -27,6 +26,7 @@ public class Runner extends GameActor {
         if(!jumping){
             body.applyLinearImpulse(getUserData().getJumpingLinearImpulse(), body.getWorldCenter(), true);
             jumping = true;
+            onPlatform = false;
         }
     }
 
@@ -48,6 +48,7 @@ public class Runner extends GameActor {
     public void platform(){
         onPlatform = true;
     }
+
 
     public boolean isOnPlatform() { return onPlatform; }
 
