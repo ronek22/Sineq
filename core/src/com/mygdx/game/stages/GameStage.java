@@ -139,6 +139,8 @@ public class GameStage extends Stage implements ContactListener {
             platforms[i] = new Platform(WorldUtils.createPlatform(world, randShift));
             addActor(platforms[i]);
         }
+        // TODO: Reset positions of PlatformType
+
 
 
     }

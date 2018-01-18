@@ -18,9 +18,6 @@ import java.util.Random;
 public class WorldUtils {
     static Random r = new Random();
     public static float LastPlatformY;
-    public static float LastPlatformX;
-
-//    public static float LastPlatformGap;
 
     public static World createWorld() {
         return new World(Constants.WORLD_GRAVITY, true);

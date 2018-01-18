@@ -36,6 +36,11 @@ public enum PlatformType {
         this.y = y;
     }
 
+    public void resetPosition(){
+        this.x = Constants.PLATFORM_X;
+        this.y = Constants.PLATFORM_Y;
+    }
+
     public float getWidth() {
         return width;
     }
