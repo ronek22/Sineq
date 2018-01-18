@@ -10,4 +10,5 @@ public enum UserDataType {
     ENEMY,
     PLATFORM,
     WALL,
+    FALLING_ROCK,
 }

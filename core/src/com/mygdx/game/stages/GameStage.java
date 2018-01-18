@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
@@ -39,6 +40,7 @@ public class GameStage extends Stage implements ContactListener {
     private Runner runner;
     private Wall left_wall;
     private Wall right_wall;
+    private FallingRock Rock;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -65,6 +67,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpGround();
         setUpRunner();
         createWall();
+        createFallingRock();
 //        createEnemy();
         createPlatforms();
     }
@@ -125,8 +128,8 @@ public class GameStage extends Stage implements ContactListener {
             world.destroyBody(body);
         }
 
-        Gdx.app.log("Pozycja sciany lewej", new Float(left_wall.getPosition()).toString() );
-        Gdx.app.log("Pozycja sciany lewej", new Float(right_wall.getPosition()).toString() );
+       // Gdx.app.log("Pozycja skaly lewej", new Float(Rock.getPosition()).toString() );
+
     }
 
     private void createEnemy() {
@@ -160,6 +163,12 @@ public class GameStage extends Stage implements ContactListener {
 
 
     }
+    private void createFallingRock() {
+        Rock = new FallingRock(WorldUtils.createFallingRock(world));
+        addActor(Rock);
+    }
+
+
 
     @Override
     public void draw() {

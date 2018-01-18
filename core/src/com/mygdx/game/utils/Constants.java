@@ -55,5 +55,11 @@ public class Constants {
     public static final float PLATFORM_FRICTION = 0f;
     public static final Vector2 PLATFORM_LINEAR_VELOCITY = new Vector2(-5f, 0);
 
+    //FALLING ROCKS
+    public static final Vector2 FALLING_ROCK_LINEAR_VELOCITY = new Vector2(-1f, 0);
+    public static final float FALLING_ROCK_GRAVITY_SCALE = 15f;
+
+
+
 
 }

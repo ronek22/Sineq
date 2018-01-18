@@ -4,7 +4,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.mygdx.game.physics.WallUserData;
 
 /**
- * Created by kubar on 16.01.2018.
+ * Created by mikbr on 18.01.2018.
  */
 
 public class Wall extends GameActor {

@@ -3,10 +3,13 @@ package com.mygdx.game.utils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.enums.PlatformType;
+import com.mygdx.game.physics.FallingRockUserData;
 import com.mygdx.game.physics.GroundUserData;
 import com.mygdx.game.physics.PlatformUserData;
 import com.mygdx.game.physics.RunnerUserData;
@@ -88,7 +91,13 @@ public class WorldUtils {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(Constants.WALL_WIDTH, Constants.WALL_HEIGHT);
         Body body = world.createBody(bodyDef);
-        body.createFixture(shape, Constants.WALL_DENSITY);
+        FixtureDef fixture = new FixtureDef();
+        fixture.shape = shape;
+        fixture.density = Constants.WALL_DENSITY;
+        fixture.filter.categoryBits = 2;
+        fixture.filter.maskBits = 1;
+        fixture.filter.groupIndex = -1;
+        body.createFixture(fixture);
         body.resetMassData();
         WallUserData userData = new WallUserData(Constants.WALL_WIDTH,Constants.WALL_HEIGHT);
         body.setUserData(userData);
@@ -103,7 +112,14 @@ public class WorldUtils {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(Constants.WALL_WIDTH, Constants.WALL_HEIGHT);
         Body body = world.createBody(bodyDef);
-        body.createFixture(shape, Constants.WALL_DENSITY);
+        FixtureDef fixture = new FixtureDef();
+        fixture.shape = shape;
+        fixture.density = Constants.WALL_DENSITY;
+        fixture.filter.categoryBits = 1;
+        fixture.filter.maskBits = 1;
+        fixture.filter.groupIndex = -1;
+
+        body.createFixture(fixture);
         body.resetMassData();
         WallUserData userData = new WallUserData(Constants.WALL_WIDTH,Constants.WALL_HEIGHT);
         body.setUserData(userData);
@@ -122,6 +138,27 @@ public class WorldUtils {
         body.resetMassData();
         EnemyUserData userData = new EnemyUserData(enemyType.getWidth(), enemyType.getHeight());
         body.setUserData(userData);
+        shape.dispose();
+        return body;
+    }
+
+    public static Body createFallingRock(World world) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(new Vector2(FallingRock.getRandom_x(), 10));
+        CircleShape shape = new CircleShape();
+        shape.setRadius(0.3f);
+        Body body = world.createBody(bodyDef);
+        body.setGravityScale(Constants.FALLING_ROCK_GRAVITY_SCALE);
+        FixtureDef fixture = new FixtureDef();
+        fixture.shape = shape;
+        fixture.density = Constants.WALL_DENSITY;
+        fixture.filter.categoryBits = 2;
+        fixture.filter.maskBits = 1;
+        fixture.filter.groupIndex = -1;
+        body.createFixture(fixture);
+        body.resetMassData();
+        body.setUserData(new FallingRockUserData(Constants.RUNNER_WIDTH, Constants.RUNNER_HEIGHT));
         shape.dispose();
         return body;
     }
