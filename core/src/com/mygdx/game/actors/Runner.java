@@ -32,17 +32,12 @@ public class Runner extends GameActor {
 
     public void move() {
         if(!moving){
-            if( true ) {
                 body.applyLinearImpulse(getUserData().getMoveRightLinearImpulse(), body.getWorldCenter(), true);
                 moving = true;
-            }
-
         }
         else{
-            if( true  ) {
                 body.applyLinearImpulse(getUserData().getMoveLeftLinearImpulse(), body.getWorldCenter(), true);
                 moving = false;
-            }
         }
     }
 
