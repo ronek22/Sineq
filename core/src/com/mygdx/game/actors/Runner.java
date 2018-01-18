@@ -22,7 +22,7 @@ public class Runner extends GameActor {
     public RunnerUserData getUserData() {
         return (RunnerUserData) userData;
     }
-    
+
     public void jump() {
         if(!jumping){
             body.applyLinearImpulse(getUserData().getJumpingLinearImpulse(), body.getWorldCenter(), true);
