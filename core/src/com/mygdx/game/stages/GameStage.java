@@ -16,11 +16,16 @@ import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
 import com.mygdx.game.utils.BodyUtils;
+import com.mygdx.game.utils.Constants;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.actors.Wall;
 
+
+import java.util.Random;
+
+import static com.mygdx.game.utils.WorldUtils.LastPlatformY;
 
 
 public class GameStage extends Stage implements ContactListener {
@@ -46,6 +51,7 @@ public class GameStage extends Stage implements ContactListener {
     private Rectangle screenLeftSide;
     private Vector3 touchPoint;
 
+
     public GameStage() {
         setUpWorld();
         setupCamera();
@@ -60,7 +66,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpRunner();
         createWall();
 //        createEnemy();
-       createPlatform();
+        createPlatform();
     }
 
     private void setUpGround() {
@@ -113,8 +119,8 @@ public class GameStage extends Stage implements ContactListener {
         if (!BodyUtils.bodyInBounds(body)) {
             if (BodyUtils.bodyIsEnemy(body) && !runner.isHit()) {
                 createEnemy();
-            } else if (BodyUtils.bodyIsPlatform(body) && !runner.isOnPlatform()){
-                createPlatform();
+            } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
+//                createPlatform();
             }
             world.destroyBody(body);
         }
@@ -134,9 +140,25 @@ public class GameStage extends Stage implements ContactListener {
         addActor(left_wall);
     }
 
-    private void createPlatform() {
-        Platform platform = new Platform(WorldUtils.createPlatform(world));
-        addActor(platform);
+
+
+    private void createPlatforms() {
+        float randShift;
+        Platform[] platforms = new Platform[Constants.PLATFORM_AMOUNT];
+        platforms[0] = new Platform(WorldUtils.createPlatform(world, 0));
+        addActor(platforms[0]);
+        for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
+
+            do { randShift = WorldUtils.generateRandomShift();
+            }while((randShift + LastPlatformY ) < 2);
+
+            platforms[i] = new Platform(WorldUtils.createPlatform(world, randShift));
+            addActor(platforms[i]);
+        }
+        // TODO: Reset positions of PlatformType
+
+
+
     }
 
     @Override
@@ -185,6 +207,8 @@ public class GameStage extends Stage implements ContactListener {
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b)) ||
                 (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
             runner.platform();
+            runner.landed();
+            System.out.println("LANDED ON PLATFORM");
         }
     }
 
