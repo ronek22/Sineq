@@ -22,9 +22,7 @@ public class Runner extends GameActor {
     public RunnerUserData getUserData() {
         return (RunnerUserData) userData;
     }
-
-    //TODO zabezpieczyć inaczej to skakanie podczas ruchu
-
+    
     public void jump() {
         if(!jumping){
             body.applyLinearImpulse(getUserData().getJumpingLinearImpulse(), body.getWorldCenter(), true);
