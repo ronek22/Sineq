@@ -16,8 +16,11 @@ import com.mygdx.game.enums.EnemyType;
 import java.util.Random;
 
 public class WorldUtils {
-
+    static Random r = new Random();
     public static float LastPlatformY;
+    public static float LastPlatformX;
+
+//    public static float LastPlatformGap;
 
     public static World createWorld() {
         return new World(Constants.WORLD_GRAVITY, true);
@@ -37,11 +40,13 @@ public class WorldUtils {
 
     public static Body createPlatform(World world, float addY) {
         PlatformType platformType = RandomUtils.getRandomPlatformType();
-        // dodawanie wartosci, aby platformy byly na roznych wysokosciach
-        platformType.setX(platformType.getX() + Constants.PLATFORM_GAP);
-        platformType.setY(platformType.getY() + addY);
+        float newPositionX = platformType.getX() + platformType.getGap();
+        float newPositionY = platformType.getY() + addY;
 
-
+        for(PlatformType platform: PlatformType.values()){
+            platform.setX(newPositionX);
+            platform.setY(newPositionY);
+        }
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.KinematicBody;
@@ -54,9 +59,8 @@ public class WorldUtils {
         fix.density = platformType.getDensity();
         fix.friction = platformType.getFriction();
         body.createFixture(fix);
-//        body.resetMassData();
         PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight());
-        System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().y + ")");
+        System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().y + ") : " + platformType.getName());
         LastPlatformY = body.getPosition().y;
         body.setUserData(userData);
         shape.dispose();
@@ -96,10 +100,9 @@ public class WorldUtils {
     }
 
     public static float generateRandomShift(){
-        Random r = new Random();
+
         float range = Constants.PLATFORM_RAND_DIFF;
         return -range + (range + range) * r.nextFloat();
-//        return r.nextInt((Constants.PLATFORM_RAND_DIFF - -(Constants.PLATFORM_RAND_DIFF))) - Constants.PLATFORM_RAND_DIFF;
     }
 
 
