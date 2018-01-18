@@ -19,8 +19,7 @@ import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.math.Vector2;
-
+import com.mygdx.game.actors.Wall;
 
 
 
@@ -33,6 +32,8 @@ public class GameStage extends Stage implements ContactListener {
     private World world;
     private Ground ground;
     private Runner runner;
+    private Wall left_wall;
+    private Wall right_wall;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -57,8 +58,9 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
+        createWall();
 //        createEnemy();
-//       createPlatform();
+       createPlatform();
     }
 
     private void setUpGround() {
@@ -117,12 +119,19 @@ public class GameStage extends Stage implements ContactListener {
             world.destroyBody(body);
         }
 
-        Gdx.app.log("test", new Float(body.getPosition().x).toString() );
+        Gdx.app.log("Pozycja sciany lewej", new Float(left_wall.getPosition()).toString() );
+        Gdx.app.log("Pozycja sciany lewej", new Float(right_wall.getPosition()).toString() );
     }
 
     private void createEnemy() {
         Enemy enemy = new Enemy(WorldUtils.createEnemy(world));
         addActor(enemy);
+    }
+    private void createWall(){
+        right_wall = new Wall(WorldUtils.createRightWall(world));
+        left_wall = new Wall(WorldUtils.createLeftWall(world));
+        addActor(right_wall);
+        addActor(left_wall);
     }
 
     private void createPlatform() {

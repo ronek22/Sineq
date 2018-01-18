@@ -12,6 +12,7 @@ import com.mygdx.game.physics.PlatformUserData;
 import com.mygdx.game.physics.RunnerUserData;
 import com.mygdx.game.physics.EnemyUserData;
 import com.mygdx.game.enums.EnemyType;
+import com.mygdx.game.physics.WallUserData;
 
 public class WorldUtils {
 
@@ -67,6 +68,35 @@ public class WorldUtils {
         return body;
     }
 
+    public static Body createLeftWall(World world) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody ;
+        bodyDef.position.set(new Vector2(Constants.WALL_LEFT_POSITION,Constants.WALL_POSITION));
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(Constants.WALL_WIDTH, Constants.WALL_HEIGHT);
+        Body body = world.createBody(bodyDef);
+        body.createFixture(shape, Constants.WALL_DENSITY);
+        body.resetMassData();
+        WallUserData userData = new WallUserData(Constants.WALL_WIDTH,Constants.WALL_HEIGHT);
+        body.setUserData(userData);
+        shape.dispose();
+        return body;
+    }
+
+    public static Body createRightWall(World world) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody ;
+        bodyDef.position.set(new Vector2(Constants.WALL_RIGHT_POSITION,Constants.WALL_POSITION));
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(Constants.WALL_WIDTH, Constants.WALL_HEIGHT);
+        Body body = world.createBody(bodyDef);
+        body.createFixture(shape, Constants.WALL_DENSITY);
+        body.resetMassData();
+        WallUserData userData = new WallUserData(Constants.WALL_WIDTH,Constants.WALL_HEIGHT);
+        body.setUserData(userData);
+        shape.dispose();
+        return body;
+    }
     public static Body createEnemy(World world) {
         EnemyType enemyType = RandomUtils.getRandomEnemyType();
         BodyDef bodyDef = new BodyDef();
