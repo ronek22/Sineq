@@ -31,9 +31,14 @@ public class WorldUtils {
         return body;
     }
 
-    public static Body createPlatform(World world) {
+    public static Body createPlatform(World world, float addY) {
         PlatformType platformType = RandomUtils.getRandomPlatformType();
-        platformType.setY(3);
+        // dodawanie wartosci, aby platformy byly na roznych wysokosciach
+        platformType.setX(platformType.getX() + Constants.PLATFORM_GAP);
+        platformType.setY(platformType.getY() + addY);
+
+
+
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.KinematicBody;
         bodyDef.position.set(new Vector2(platformType.getX(), platformType.getY()));
@@ -47,7 +52,7 @@ public class WorldUtils {
         body.createFixture(fix);
 //        body.resetMassData();
         PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight());
-        System.out.println("PLATFORMA Y: " + body.getPosition().y);
+        System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().x + ")");
         body.setUserData(userData);
         shape.dispose();
         return body;

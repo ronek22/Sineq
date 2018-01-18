@@ -16,6 +16,7 @@ import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
 import com.mygdx.game.utils.BodyUtils;
+import com.mygdx.game.utils.Constants;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
@@ -41,6 +42,8 @@ public class GameStage extends Stage implements ContactListener {
     private Rectangle screenRightSide;
     private Vector3 touchPoint;
 
+    private int stan = 0;
+
     public GameStage() {
         setUpWorld();
         setupCamera();
@@ -54,7 +57,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpGround();
         setUpRunner();
 //        createEnemy();
-        createPlatform();
+        createPlatforms();
     }
 
     private void setUpGround() {
@@ -107,7 +110,7 @@ public class GameStage extends Stage implements ContactListener {
             if (BodyUtils.bodyIsEnemy(body) && !runner.isHit()) {
                 createEnemy();
             } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
-                createPlatform();
+//                createPlatform();
             }
             world.destroyBody(body);
         }
@@ -118,9 +121,15 @@ public class GameStage extends Stage implements ContactListener {
         addActor(enemy);
     }
 
-    private void createPlatform() {
-        Platform platform = new Platform(WorldUtils.createPlatform(world));
-        addActor(platform);
+    private void createPlatforms() {
+        Platform[] platforms = new Platform[Constants.PLATFORM_AMOUNT];
+        for(int i = 0; i < Constants.PLATFORM_AMOUNT; i++){
+            platforms[i] = new Platform(WorldUtils.createPlatform(world, 1f));
+            addActor(platforms[i]);
+        }
+//        Platform platform = new Platform(WorldUtils.createPlatform(world, 1f));
+//        addActor(platform);
+
     }
 
     @Override
@@ -158,7 +167,9 @@ public class GameStage extends Stage implements ContactListener {
                 (BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b))) {
             runner.hit();
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
-                (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
+                (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b)) ||
+                (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsRunner(b)) ||
+                (BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b))) {
             runner.landed();
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b)) ||
                 (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
