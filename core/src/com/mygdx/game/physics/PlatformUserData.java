@@ -22,6 +22,7 @@ public class PlatformUserData extends UserData {
         this.linearVelocity = linearVelocity;
     }
 
+
     public Vector2 getLinearVelocity() {
         return linearVelocity;
     }

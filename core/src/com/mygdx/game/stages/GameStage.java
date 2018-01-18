@@ -19,6 +19,8 @@ import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.actors.Wall;
+
 
 
 public class GameStage extends Stage implements ContactListener {
@@ -30,6 +32,8 @@ public class GameStage extends Stage implements ContactListener {
     private World world;
     private Ground ground;
     private Runner runner;
+    private Wall left_wall;
+    private Wall right_wall;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -39,6 +43,7 @@ public class GameStage extends Stage implements ContactListener {
 
     // for controls
     private Rectangle screenRightSide;
+    private Rectangle screenLeftSide;
     private Vector3 touchPoint;
 
     public GameStage() {
@@ -53,8 +58,9 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
+        createWall();
 //        createEnemy();
-        createPlatform();
+       createPlatform();
     }
 
     private void setUpGround() {
@@ -75,6 +81,7 @@ public class GameStage extends Stage implements ContactListener {
 
     private void setupTouchControlAreas() {
         touchPoint = new Vector3();
+        screenLeftSide = new Rectangle(0, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
         screenRightSide = new Rectangle(getCamera().viewportWidth / 2, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
         Gdx.input.setInputProcessor(this);
     }
@@ -111,11 +118,20 @@ public class GameStage extends Stage implements ContactListener {
             }
             world.destroyBody(body);
         }
+
+        Gdx.app.log("Pozycja sciany lewej", new Float(left_wall.getPosition()).toString() );
+        Gdx.app.log("Pozycja sciany lewej", new Float(right_wall.getPosition()).toString() );
     }
 
     private void createEnemy() {
         Enemy enemy = new Enemy(WorldUtils.createEnemy(world));
         addActor(enemy);
+    }
+    private void createWall(){
+        right_wall = new Wall(WorldUtils.createRightWall(world));
+        left_wall = new Wall(WorldUtils.createLeftWall(world));
+        addActor(right_wall);
+        addActor(left_wall);
     }
 
     private void createPlatform() {
@@ -137,12 +153,18 @@ public class GameStage extends Stage implements ContactListener {
         if (rightSideTouched(touchPoint.x, touchPoint.y)) {
             runner.jump();
         }
+        else if (leftSideTouched(touchPoint.x, touchPoint.y)) {
+            runner.move();
+        }
 
         return super.touchDown(x, y, pointer, button);
     }
 
     private boolean rightSideTouched(float x, float y) {
         return screenRightSide.contains(x, y);
+    }
+    private boolean leftSideTouched(float x, float y) {
+        return screenLeftSide.contains(x, y);
     }
 
     private void translateScreenToWorldCoordinates(int x, int y) {
