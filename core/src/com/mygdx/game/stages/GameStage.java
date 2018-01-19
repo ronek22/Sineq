@@ -11,7 +11,9 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.mygdx.game.actors.Bullet;
 import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
@@ -55,10 +57,11 @@ public class GameStage extends Stage implements ContactListener {
     private Vector3 touchPoint;
 
     private Array<Bullet> bullets;
+    private Array<Platform> platforms = new Array<Platform>();
     private Array<Body> toBeDeleted = new Array<Body>();
 
     // how many enemies
-    private int enemyCounter = 0;
+    private boolean shoot = false;
 
     public GameStage() {
         setUpWorld();
@@ -108,14 +111,13 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void act(float delta) {
         super.act(delta);
-
-        Array<Body> bodies = new Array<Body>(world.getBodyCount());
-        world.getBodies(bodies);
-        for(Body body : bodies){
-            update(body);
+        if(!world.isLocked()){
+            Array<Body> bodies = new Array<Body>(world.getBodyCount());
+            world.getBodies(bodies);
+            for(Body body : bodies){
+                update(body);
+            }
         }
-
-
         // Fixed timestep
         accumulator += delta;
 
@@ -124,34 +126,24 @@ public class GameStage extends Stage implements ContactListener {
             accumulator -= TIME_STEP;
         }
 
-        for (Body body : toBeDeleted) {
-            world.destroyBody(body);
-        }
-        toBeDeleted.clear();
-        Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
-        Gdx.app.log("BULLETS", "BULLETS: " + bullets.size);
-
-
-        //TODO: Implement interpolation
 
     }
 
     private void update(Body body) {
-        if (!BodyUtils.bodyInBounds(body)) {
+        if (!BodyUtils.bodyInBounds(body) ) {
             if ((BodyUtils.bodyIsEnemy(body) && !runner.isHit())) {
                 // zly warunek po zabiciu juz sie nie pokaza nastepni
                 createEnemy();
             } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
 //                createPlatform();
             }
+            System.out.println("POSZLO");
             toBeDeleted.add(body);
         }
 
 
-
-       // Gdx.app.log("Pozycja skaly lewej", new Float(Rock.getPosition()).toString() );
-
     }
+
 
     private void createEnemy() {
         Enemy enemy = new Enemy(WorldUtils.createEnemy(world));
@@ -168,16 +160,15 @@ public class GameStage extends Stage implements ContactListener {
 
     private void createPlatforms() {
         float randShift;
-        Platform[] platforms = new Platform[Constants.PLATFORM_AMOUNT];
-        platforms[0] = new Platform(WorldUtils.createPlatform(world, 0));
-        addActor(platforms[0]);
+        platforms.add(new Platform(WorldUtils.createPlatform(world, 0)));
+        addActor(platforms.get(platforms.size - 1));
         for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
 
             do { randShift = WorldUtils.generateRandomShift();
             }while((randShift + LastPlatformY ) < 2);
 
-            platforms[i] = new Platform(WorldUtils.createPlatform(world, randShift));
-            addActor(platforms[i]);
+            platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
+            addActor(platforms.get(platforms.size - 1));
         }
         // TODO: Reset positions of PlatformType
 
@@ -195,12 +186,69 @@ public class GameStage extends Stage implements ContactListener {
 
     }
 
+    private void removeEmptyActors(){
+            Array<Integer> indexes = new Array<Integer>();
+            for(Bullet bullet : bullets){
+                if(toBeDeleted.contains(bullet.getBody(), false)){
+                    indexes.add(bullets.indexOf(bullet, true));
+                    bullet.getBody().setUserData(null);
+                    bullet.addAction(Actions.removeActor());
+                }
+            }
+
+            for(int ind : indexes){
+                // ta linia wszystko naprawila :D
+                bullets.get(ind).remove();
+                bullets.removeIndex(ind);
+            }
+
+            indexes.clear();
+
+            for(Platform platform : platforms){
+                if(toBeDeleted.contains(platform.getBody(), false)){
+                    indexes.add(platforms.indexOf(platform, true));
+                    platform.getBody().setUserData(null);
+                    platform.addAction(Actions.removeActor());
+                }
+            }
+
+            for(int ind : indexes){
+                // ta linia wszystko naprawila :D
+                platforms.get(ind).remove();
+                platforms.removeIndex(ind);
+            }
+    }
+
 
 
     @Override
     public void draw() {
         super.draw();
+
+        if(toBeDeleted.size > 0){
+            removeEmptyActors();
+            if(!world.isLocked()) {
+                for (Body body : toBeDeleted)
+                {
+                    world.destroyBody(body);
+                    body.setUserData(null);
+                }
+
+            }
+            toBeDeleted.clear();
+        }
+
+        if(!world.isLocked() && shoot){
+            createBullet();
+            shoot = false;
+        }
+
+//        Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
+//        Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
         renderer.render(world, camera.combined);
+
+
+
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
@@ -213,7 +261,7 @@ public class GameStage extends Stage implements ContactListener {
         }
         else if (leftSideTouched(touchPoint.x, touchPoint.y)) {
 //            runner.move();
-            createBullet();
+            shoot = true;
         }
 
         return super.touchDown(x, y, pointer, button);
@@ -246,7 +294,8 @@ public class GameStage extends Stage implements ContactListener {
             runner.platform();
             runner.landed();
             System.out.println("LANDED ON PLATFORM");
-        } else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
+        }
+        else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
             toBeDeleted.add(a);
         } else if(BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsBullet(b)) {
             toBeDeleted.add(b);

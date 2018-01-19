@@ -35,18 +35,8 @@ public class Bullet extends GameActor {
         return body.getPosition().x;
     }
 
-    public void fire(){
-        if(!fired){
-            fired = true;
-        }
-    }
-
-    public void shooted(){
-        fired = false;
-    }
-
-    public boolean fired(){
-        return fired;
+    public Body getBody(){
+        return body;
     }
 
 
