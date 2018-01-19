@@ -11,7 +11,6 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.mygdx.game.actors.Bullet;
@@ -27,7 +26,6 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.actors.Wall;
 
 
-import java.util.Random;
 
 import static com.mygdx.game.utils.WorldUtils.LastPlatformY;
 
@@ -53,10 +51,11 @@ public class GameStage extends Stage implements ContactListener {
 
     // for controls
     private Rectangle screenRightSide;
-    private Rectangle screenLeftSide;
+    private Rectangle screenTopLeftSide;
+    private Rectangle screenBottomLeftSide;
     private Vector3 touchPoint;
 
-    private Array<Bullet> bullets;
+    private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Platform> platforms = new Array<Platform>();
     private Array<Body> toBeDeleted = new Array<Body>();
 
@@ -75,9 +74,8 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
-        setUpBullets();
-//        createWall();
-//        createFallingRock();
+        createWall();
+        createFallingRock();
 //        createEnemy();
         createPlatforms();
     }
@@ -92,9 +90,6 @@ public class GameStage extends Stage implements ContactListener {
         addActor(runner);
     }
 
-    private void setUpBullets() {
-        bullets = new Array<Bullet>();
-    }
     private void setupCamera() {
         camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0f);
@@ -103,7 +98,8 @@ public class GameStage extends Stage implements ContactListener {
 
     private void setupTouchControlAreas() {
         touchPoint = new Vector3();
-        screenLeftSide = new Rectangle(0, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
+        screenTopLeftSide = new Rectangle(0, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
+        screenBottomLeftSide = new Rectangle(0, getCamera().viewportHeight / 2, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
         screenRightSide = new Rectangle(getCamera().viewportWidth / 2, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
         Gdx.input.setInputProcessor(this);
     }
@@ -111,6 +107,7 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void act(float delta) {
         super.act(delta);
+
         if(!world.isLocked()){
             Array<Body> bodies = new Array<Body>(world.getBodyCount());
             world.getBodies(bodies);
@@ -118,14 +115,13 @@ public class GameStage extends Stage implements ContactListener {
                 update(body);
             }
         }
-        // Fixed timestep
+
         accumulator += delta;
 
         while (accumulator >= delta) {
             world.step(TIME_STEP, 6, 2);
             accumulator -= TIME_STEP;
         }
-
 
     }
 
@@ -135,12 +131,10 @@ public class GameStage extends Stage implements ContactListener {
                 // zly warunek po zabiciu juz sie nie pokaza nastepni
                 createEnemy();
             } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
-//                createPlatform();
+                //createPlatform();
             }
-            System.out.println("POSZLO");
             toBeDeleted.add(body);
         }
-
 
     }
 
@@ -187,36 +181,36 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void removeEmptyActors(){
-            Array<Integer> indexes = new Array<Integer>();
-            for(Bullet bullet : bullets){
-                if(toBeDeleted.contains(bullet.getBody(), false)){
-                    indexes.add(bullets.indexOf(bullet, true));
-                    bullet.getBody().setUserData(null);
-                    bullet.addAction(Actions.removeActor());
-                }
-            }
 
-            for(int ind : indexes){
-                // ta linia wszystko naprawila :D
-                bullets.get(ind).remove();
-                bullets.removeIndex(ind);
+        // ====== BULLETS =========
+        Array<Integer> indexes = new Array<Integer>();
+        for(Bullet bullet : bullets){
+            if(toBeDeleted.contains(bullet.getBody(), false)){
+                indexes.add(bullets.indexOf(bullet, true));
+                bullet.getBody().setUserData(null);
+                bullet.addAction(Actions.removeActor());
             }
+        }
 
-            indexes.clear();
+        for(int ind : indexes){
+            bullets.get(ind).remove();
+            bullets.removeIndex(ind);
+        }
 
-            for(Platform platform : platforms){
-                if(toBeDeleted.contains(platform.getBody(), false)){
-                    indexes.add(platforms.indexOf(platform, true));
-                    platform.getBody().setUserData(null);
-                    platform.addAction(Actions.removeActor());
-                }
+        indexes.clear();
+        // ====== PLATFORMS =========
+        for(Platform platform : platforms) {
+            if (toBeDeleted.contains(platform.getBody(), false)) {
+                indexes.add(platforms.indexOf(platform, true));
+                platform.getBody().setUserData(null);
+                platform.addAction(Actions.removeActor());
             }
+        }
 
-            for(int ind : indexes){
-                // ta linia wszystko naprawila :D
-                platforms.get(ind).remove();
-                platforms.removeIndex(ind);
-            }
+        for(int ind : indexes){
+            platforms.get(ind).remove();
+            platforms.removeIndex(ind);
+        }
     }
 
 
@@ -243,11 +237,9 @@ public class GameStage extends Stage implements ContactListener {
             shoot = false;
         }
 
-//        Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
-//        Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
+        // Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
+        // Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
         renderer.render(world, camera.combined);
-
-
 
     }
 
@@ -259,8 +251,9 @@ public class GameStage extends Stage implements ContactListener {
         if (rightSideTouched(touchPoint.x, touchPoint.y)) {
             runner.jump();
         }
-        else if (leftSideTouched(touchPoint.x, touchPoint.y)) {
-//            runner.move();
+        else if (leftTopSideTouched(touchPoint.x, touchPoint.y)) {
+            runner.move();
+        } else if (leftBottomSideTouched(touchPoint.x, touchPoint.y)) {
             shoot = true;
         }
 
@@ -270,8 +263,11 @@ public class GameStage extends Stage implements ContactListener {
     private boolean rightSideTouched(float x, float y) {
         return screenRightSide.contains(x, y);
     }
-    private boolean leftSideTouched(float x, float y) {
-        return screenLeftSide.contains(x, y);
+    private boolean leftTopSideTouched(float x, float y) {
+        return screenTopLeftSide.contains(x, y);
+    }
+    private boolean leftBottomSideTouched(float x, float y){
+        return screenBottomLeftSide.contains(x, y);
     }
 
     private void translateScreenToWorldCoordinates(int x, int y) {
