@@ -42,7 +42,6 @@ public class GameStage extends Stage implements ContactListener {
     private Wall left_wall;
     private Wall right_wall;
     private FallingRock Rock;
-    private Bullet one;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -57,6 +56,9 @@ public class GameStage extends Stage implements ContactListener {
 
     private Array<Bullet> bullets;
     private Array<Body> toBeDeleted = new Array<Body>();
+
+    // how many enemies
+    private int enemyCounter = 0;
 
     public GameStage() {
         setUpWorld();
@@ -73,8 +75,8 @@ public class GameStage extends Stage implements ContactListener {
         setUpBullets();
 //        createWall();
 //        createFallingRock();
-        createEnemy();
-//        createPlatforms();
+//        createEnemy();
+        createPlatforms();
     }
 
     private void setUpGround() {
@@ -136,7 +138,7 @@ public class GameStage extends Stage implements ContactListener {
 
     private void update(Body body) {
         if (!BodyUtils.bodyInBounds(body)) {
-            if (BodyUtils.bodyIsEnemy(body) && !runner.isHit()) {
+            if ((BodyUtils.bodyIsEnemy(body) && !runner.isHit())) {
                 // zly warunek po zabiciu juz sie nie pokaza nastepni
                 createEnemy();
             } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
@@ -248,10 +250,8 @@ public class GameStage extends Stage implements ContactListener {
             toBeDeleted.add(a);
         } else if(BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsBullet(b)) {
             toBeDeleted.add(b);
-        } else if((BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsBullet(b))){
-            toBeDeleted.add(a);
-            toBeDeleted.add(b);
-        } else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsEnemy(b))){
+        } else if((BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsBullet(b)) ||
+                ((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsEnemy(b)))){
             toBeDeleted.add(a);
             toBeDeleted.add(b);
         }

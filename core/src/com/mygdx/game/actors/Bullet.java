@@ -14,7 +14,7 @@ import com.mygdx.game.physics.UserData;
 
 public class Bullet extends GameActor {
 
-    private boolean fired;
+    private boolean fired = false;
 
     public Bullet(Body body){
         super(body);
@@ -36,7 +36,13 @@ public class Bullet extends GameActor {
     }
 
     public void fire(){
-        fired = true;
+        if(!fired){
+            fired = true;
+        }
+    }
+
+    public void shooted(){
+        fired = false;
     }
 
     public boolean fired(){
