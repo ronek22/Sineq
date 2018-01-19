@@ -42,6 +42,7 @@ public class GameStage extends Stage implements ContactListener {
     private Wall left_wall;
     private Wall right_wall;
     private FallingRock Rock;
+    private Bullet one;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -54,6 +55,8 @@ public class GameStage extends Stage implements ContactListener {
     private Rectangle screenLeftSide;
     private Vector3 touchPoint;
 
+    private Array<Bullet> bullets;
+    private Array<Body> toBeDeleted = new Array<Body>();
 
     public GameStage() {
         setUpWorld();
@@ -67,10 +70,11 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
+        setUpBullets();
 //        createWall();
 //        createFallingRock();
-//        createEnemy();
-        createPlatforms();
+        createEnemy();
+//        createPlatforms();
     }
 
     private void setUpGround() {
@@ -83,6 +87,9 @@ public class GameStage extends Stage implements ContactListener {
         addActor(runner);
     }
 
+    private void setUpBullets() {
+        bullets = new Array<Bullet>();
+    }
     private void setupCamera() {
         camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0f);
@@ -101,12 +108,11 @@ public class GameStage extends Stage implements ContactListener {
         super.act(delta);
 
         Array<Body> bodies = new Array<Body>(world.getBodyCount());
-        Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
         world.getBodies(bodies);
-
-        for (Body body : bodies) {
+        for(Body body : bodies){
             update(body);
         }
+
 
         // Fixed timestep
         accumulator += delta;
@@ -116,6 +122,14 @@ public class GameStage extends Stage implements ContactListener {
             accumulator -= TIME_STEP;
         }
 
+        for (Body body : toBeDeleted) {
+            world.destroyBody(body);
+        }
+        toBeDeleted.clear();
+        Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
+        Gdx.app.log("BULLETS", "BULLETS: " + bullets.size);
+
+
         //TODO: Implement interpolation
 
     }
@@ -123,12 +137,15 @@ public class GameStage extends Stage implements ContactListener {
     private void update(Body body) {
         if (!BodyUtils.bodyInBounds(body)) {
             if (BodyUtils.bodyIsEnemy(body) && !runner.isHit()) {
+                // zly warunek po zabiciu juz sie nie pokaza nastepni
                 createEnemy();
             } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
 //                createPlatform();
             }
-            world.destroyBody(body);
+            toBeDeleted.add(body);
         }
+
+
 
        // Gdx.app.log("Pozycja skaly lewej", new Float(Rock.getPosition()).toString() );
 
@@ -171,8 +188,9 @@ public class GameStage extends Stage implements ContactListener {
 
     private void createBullet() {
         Gdx.app.log("Check Position of Runner", runner.getX() + " : " + runner.getY());
-        Bullet bullet = new Bullet(WorldUtils.createBullet(world, runner.getX(), runner.getY()));
-        addActor(bullet);
+        bullets.add(new Bullet(WorldUtils.createBullet(world, runner.getX() + Constants.RUNNER_WIDTH, runner.getY())));
+        addActor(bullets.get(bullets.size-1));
+
     }
 
 
@@ -226,6 +244,16 @@ public class GameStage extends Stage implements ContactListener {
             runner.platform();
             runner.landed();
             System.out.println("LANDED ON PLATFORM");
+        } else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsBullet(b)) {
+            toBeDeleted.add(b);
+        } else if((BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsBullet(b))){
+            toBeDeleted.add(a);
+            toBeDeleted.add(b);
+        } else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsEnemy(b))){
+            toBeDeleted.add(a);
+            toBeDeleted.add(b);
         }
     }
 

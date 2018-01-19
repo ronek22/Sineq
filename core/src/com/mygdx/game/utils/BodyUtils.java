@@ -1,6 +1,7 @@
 package com.mygdx.game.utils;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.mygdx.game.enums.UserDataType;
 import com.mygdx.game.physics.UserData;
 
@@ -27,6 +28,7 @@ public class BodyUtils {
     }
 
 
+
     public static boolean bodyIsRunner(Body body) {
         UserData userData = (UserData) body.getUserData();
 
@@ -48,6 +50,12 @@ public class BodyUtils {
         UserData userData = (UserData) body.getUserData();
 
         return userData != null && userData.getUserDataType() == UserDataType.PLATFORM;
+    }
+
+    public static boolean bodyIsBullet(Body body){
+        UserData userData = (UserData) body.getUserData();
+
+        return userData != null && userData.getUserDataType() == UserDataType.BULLET;
     }
 
 }
