@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.mygdx.game.actors.Bullet;
 import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
@@ -66,8 +67,8 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
-        createWall();
-        createFallingRock();
+//        createWall();
+//        createFallingRock();
 //        createEnemy();
         createPlatforms();
     }
@@ -100,6 +101,7 @@ public class GameStage extends Stage implements ContactListener {
         super.act(delta);
 
         Array<Body> bodies = new Array<Body>(world.getBodyCount());
+        Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
         world.getBodies(bodies);
 
         for (Body body : bodies) {
@@ -161,11 +163,16 @@ public class GameStage extends Stage implements ContactListener {
         // TODO: Reset positions of PlatformType
 
 
-
     }
     private void createFallingRock() {
         Rock = new FallingRock(WorldUtils.createFallingRock(world));
         addActor(Rock);
+    }
+
+    private void createBullet() {
+        Gdx.app.log("Check Position of Runner", runner.getX() + " : " + runner.getY());
+        Bullet bullet = new Bullet(WorldUtils.createBullet(world, runner.getX(), runner.getY()));
+        addActor(bullet);
     }
 
 
@@ -185,7 +192,8 @@ public class GameStage extends Stage implements ContactListener {
             runner.jump();
         }
         else if (leftSideTouched(touchPoint.x, touchPoint.y)) {
-            runner.move();
+//            runner.move();
+            createBullet();
         }
 
         return super.touchDown(x, y, pointer, button);

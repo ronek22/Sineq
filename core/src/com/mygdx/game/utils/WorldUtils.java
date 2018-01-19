@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.enums.PlatformType;
+import com.mygdx.game.physics.BulletUserData;
 import com.mygdx.game.physics.FallingRockUserData;
 import com.mygdx.game.physics.GroundUserData;
 import com.mygdx.game.physics.PlatformUserData;
@@ -159,6 +160,24 @@ public class WorldUtils {
         body.createFixture(fixture);
         body.resetMassData();
         body.setUserData(new FallingRockUserData(Constants.RUNNER_WIDTH, Constants.RUNNER_HEIGHT));
+        shape.dispose();
+        return body;
+    }
+
+    public static Body createBullet(World world, float x, float y) {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(new Vector2(x, y));
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(Constants.BULLET_WIDTH / 2, Constants.BULLET_HEIGHT / 2);
+        Body body = world.createBody(bodyDef);
+
+        FixtureDef fixture = new FixtureDef();
+        fixture.shape = shape;
+        fixture.density = Constants.BULLET_DENSITY;
+        fixture.friction = 0f;
+        body.createFixture(fixture);
+        body.setUserData(new BulletUserData(Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT));
         shape.dispose();
         return body;
     }

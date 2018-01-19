@@ -19,6 +19,8 @@ public class BodyUtils {
                 return body.getPosition().x + userData.getWidth() / 2 > 0;
             case PLATFORM:
                 return body.getPosition().x + userData.getWidth() / 2 > 0;
+            case BULLET:
+                return body.getPosition().x + userData.getWidth() /2 < 20;
         }
 
         return true;
