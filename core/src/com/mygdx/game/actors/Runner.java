@@ -46,9 +46,10 @@ public class Runner extends GameActor {
         jumping = false;
     }
 
-    public float getPosition(){
+    public float getX(){
         return body.getPosition().x;
     }
+    public float getY() { return body.getPosition().y; }
 
 
     public void hit() {
