@@ -90,7 +90,7 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
-//        createWall();
+        createWall();
 //        createFallingRock();
         createEnemy();
         createPlatforms();
@@ -354,6 +354,12 @@ public class GameStage extends Stage implements ContactListener {
         } else if(BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b)){
             runner.hit();
             toBeDeleted.add(b);
+        } else if(BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsSpikes(b)){
+            runner.hit();
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsSpikes(b)){
+            runner.hit();
+            toBeDeleted.add(b);
         } else if((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
                 (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
             runner.landed();
@@ -361,7 +367,7 @@ public class GameStage extends Stage implements ContactListener {
                 (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
             runner.platform();
             runner.landed();
-            System.out.println("LANDED ON PLATFORM");
+//            System.out.println("LANDED ON PLATFORM");
         }
         else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
             toBeDeleted.add(a);

@@ -145,7 +145,7 @@ public class WorldUtils {
         PolygonShape shape = new PolygonShape();
         shape.setAsBox((y-x) / 2, Constants.SPIKE_GROUND_HEIGHT);
         body.createFixture(shape, Constants.SPIKE_GROUND_DENSITY);
-        body.setUserData(new SpikeGroundUserData((y-x) / 2, Constants.SPIKE_GROUND_HEIGHT / 2));
+        body.setUserData(new SpikeGroundUserData((y-x) / 2, Constants.SPIKE_GROUND_HEIGHT));
         shape.dispose();
         System.out.println("SPIKE: (" + body.getPosition().x + ", " + body.getPosition().y + ")");
         return body;
