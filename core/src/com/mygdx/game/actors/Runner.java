@@ -1,6 +1,7 @@
 package com.mygdx.game.actors;
 
 import com.badlogic.gdx.physics.box2d.Body;
+import com.mygdx.game.enums.Difficulty;
 import com.mygdx.game.physics.RunnerUserData;
 
 /**
@@ -66,8 +67,17 @@ public class Runner extends GameActor {
         onPlatform = true;
     }
 
-
     public boolean isOnPlatform() { return onPlatform; }
+
+    public void onDifficultyChange(Difficulty newDifficulty) {
+        setGravityScale(newDifficulty.getRunnerGravityScale());
+        getUserData().setJumpingLinearImpulse(newDifficulty.getRunnerJumpingLinearImpulse());
+    }
+
+    public void setGravityScale(float gravityScale){
+        body.setGravityScale(gravityScale);
+        body.resetMassData();
+    }
 
     public Body getBody(){
         return body;

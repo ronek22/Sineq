@@ -21,6 +21,7 @@ import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
 import com.mygdx.game.actors.SpikeGround;
+import com.mygdx.game.enums.Difficulty;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.enums.PlatformType;
 import com.mygdx.game.screens.Menu;
@@ -78,14 +79,27 @@ public class GameStage extends Stage implements ContactListener {
     private boolean levelEnemy = false;
     private int countEnemies = 0;
 
+    private int MAX_PLATFORM;
+    private int MAX_ENEMIES;
+    private float totalTimePassed;
+
 
     public GameStage(GameMain game) {
         this.game = game;
         GameManager.getInstance().setGameState(GameState.RUNNING);
+        GameManager.getInstance().setDifficulty(Difficulty.DIF_1);
+        setUpDifficulty();
         setUpWorld();
         setupCamera();
         setupTouchControlAreas();
         renderer = new Box2DDebugRenderer();
+    }
+
+    public void setUpDifficulty(){
+        Difficulty current = GameManager.getInstance().getDifficulty();
+
+        MAX_ENEMIES = current.getAmountEnemies();
+        MAX_PLATFORM = current.getAmountPlatform();
     }
 
     private void setUpWorld(){
@@ -121,10 +135,35 @@ public class GameStage extends Stage implements ContactListener {
         Gdx.input.setInputProcessor(this);
     }
 
+    public void updateDifficulty(){
+        if (GameManager.getInstance().isMaxDifficulty()) {
+            return;
+        }
+
+        Difficulty current = GameManager.getInstance().getDifficulty();
+
+        int nextDifficulty = current.getLevel() + 1;
+        String difficultyName = "DIF_" + nextDifficulty;
+        GameManager.getInstance().setDifficulty(Difficulty.valueOf(difficultyName));
+        current = GameManager.getInstance().getDifficulty();
+        MAX_ENEMIES = current.getAmountEnemies();
+        MAX_PLATFORM = current.getAmountPlatform();
+        runner.onDifficultyChange(current);
+//            score.setMultiplier(GameManager.getInstance().getDifficulty().getScoreMultiplier());
+
+    }
+
     @Override
     public void act(float delta) {
         super.act(delta);
-     //   System.out.println("BODIES: " + world.getBodyCount());
+        if (GameManager.getInstance().getGameState() == GameState.PAUSED) return;
+
+        if (GameManager.getInstance().getGameState() == GameState.RUNNING) {
+            totalTimePassed += delta;
+        }
+//        System.out.println(GameManager.getInstance().getDifficulty().getLevel());
+
+        //   System.out.println("BODIES: " + world.getBodyCount());
         if(!world.isLocked()){
             Array<Body> bodies = new Array<Body>(world.getBodyCount());
             world.getBodies(bodies);
@@ -158,6 +197,8 @@ public class GameStage extends Stage implements ContactListener {
 
     private void createEnemy() {
         enemy = new Enemy(WorldUtils.createEnemy(world));
+        enemy.getUserData().setLinearVelocity(
+                GameManager.getInstance().getDifficulty().getEnemyLinearVelocity());
         countEnemies++;
         addActor(enemy);
     }
@@ -175,22 +216,31 @@ public class GameStage extends Stage implements ContactListener {
         float x;
         float randShift;
         platforms.add(new Platform(WorldUtils.createPlatform(world, 0)));
+        platforms.get(platforms.size - 1).getUserData().setLinearVelocity(
+                GameManager.getInstance().getDifficulty().getPlatformLinearVelocity()
+        );
         addActor(platforms.get(platforms.size - 1));
         x = WorldUtils.LastPlatformX;
 
         createFallingRock(false);
         createFallingRock(true);
 
-        for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
+        for(int i = 1; i < MAX_PLATFORM; i++){
 
             do { randShift = WorldUtils.generateRandomShift();
             }while((randShift + LastPlatformY ) < 2);
 
             platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
+            platforms.get(platforms.size - 1).getUserData().setLinearVelocity(
+                    GameManager.getInstance().getDifficulty().getPlatformLinearVelocity()
+            );
             addActor(platforms.get(platforms.size - 1));
         }
       //  System.out.println("X: " + x);
         spikes = new SpikeGround(WorldUtils.createSpikes(world, x, WorldUtils.LastPlatformX));
+        spikes.getUserData().setLinearVelocity(
+                GameManager.getInstance().getDifficulty().getPlatformLinearVelocity()
+        );
         addActor(spikes);
 
         PlatformType.reset();
@@ -316,6 +366,7 @@ public class GameStage extends Stage implements ContactListener {
             makeEnemy = false;
             levelPlatform = true;
             countEnemies = 0;
+            updateDifficulty();
         }
 
         if(!world.isLocked() && levelEnemy && canMakeEnemies()){
@@ -352,7 +403,7 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private boolean canMakeEnemies() {
-        return countEnemies < Constants.ENEMY_AMOUNT && emptyLevel();
+        return countEnemies < MAX_ENEMIES && emptyLevel();
     }
 
     private boolean emptyLevel() {
