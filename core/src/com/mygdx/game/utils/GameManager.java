@@ -3,6 +3,7 @@ package com.mygdx.game.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.mygdx.game.GameMain;
+import com.mygdx.game.enums.Difficulty;
 import com.mygdx.game.enums.GameState;
 
 /**
@@ -13,12 +14,14 @@ public class GameManager implements GameEventListener {
 
     // Singleton
     private static GameManager ourInstance = new GameManager();
-    private GameMain game;
+//    private GameMain game;
 
     public static final String PREFERENCES_NAME = "preferences";
     private static final String MAX_SCORE_PREFERENCE = "max_score";
     private GameState gameState;
     private GameEventListener gameEventListener;
+    private Difficulty difficulty;
+
 
     public static GameManager getInstance() {
         return ourInstance;
@@ -34,6 +37,22 @@ public class GameManager implements GameEventListener {
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Difficulty difficulty){
+        this.difficulty = difficulty;
+    }
+
+    public boolean isMaxDifficulty(){
+        return difficulty == Difficulty.values()[Difficulty.values().length-1];
+    }
+
+    public void resetDifficulty(){
+        setDifficulty(Difficulty.values()[0]);
     }
 
     public void setGameEventListener(GameEventListener gameEventListener){
