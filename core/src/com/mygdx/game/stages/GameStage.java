@@ -42,6 +42,7 @@ public class GameStage extends Stage implements ContactListener {
     private Wall left_wall;
     private Wall right_wall;
     private FallingRock Rock;
+    private Enemy enemy;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -55,12 +56,15 @@ public class GameStage extends Stage implements ContactListener {
     private Rectangle screenBottomLeftSide;
     private Vector3 touchPoint;
 
+
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Platform> platforms = new Array<Platform>();
     private Array<Body> toBeDeleted = new Array<Body>();
 
     // how many enemies
     private boolean shoot = false;
+    private boolean makeEnemy;
+
 
     public GameStage() {
         setUpWorld();
@@ -76,7 +80,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpRunner();
         createWall();
 //        createFallingRock();
-//        createEnemy();
+        createEnemy();
         createPlatforms();
     }
 
@@ -129,7 +133,7 @@ public class GameStage extends Stage implements ContactListener {
         if (!BodyUtils.bodyInBounds(body) ) {
             if ((BodyUtils.bodyIsEnemy(body) && !runner.isHit())) {
                 // zly warunek po zabiciu juz sie nie pokaza nastepni
-                createEnemy();
+                makeEnemy = true;
             } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
                 //createPlatform();
             }
@@ -140,7 +144,7 @@ public class GameStage extends Stage implements ContactListener {
 
 
     private void createEnemy() {
-        Enemy enemy = new Enemy(WorldUtils.createEnemy(world));
+        enemy = new Enemy(WorldUtils.createEnemy(world));
         addActor(enemy);
     }
     private void createWall(){
@@ -182,6 +186,8 @@ public class GameStage extends Stage implements ContactListener {
 
     private void removeEmptyActors(){
 
+
+
         // ====== BULLETS =========
         Array<Integer> indexes = new Array<Integer>();
         for(Bullet bullet : bullets){
@@ -212,6 +218,17 @@ public class GameStage extends Stage implements ContactListener {
             platforms.removeIndex(ind);
         }
         indexes.clear();
+
+        // ===== ENEMY ==========
+        if(enemy != null) {
+            if(toBeDeleted.contains(enemy.getBody(), false)){
+                enemy.getBody().setUserData(null);
+                enemy.addAction(Actions.removeActor());
+                enemy.remove();
+            }
+        }
+
+
     }
 
 
@@ -236,6 +253,11 @@ public class GameStage extends Stage implements ContactListener {
         if(!world.isLocked() && shoot){
             createBullet();
             shoot = false;
+        }
+
+        if(!world.isLocked() && makeEnemy){
+            createEnemy();
+            makeEnemy = false;
         }
 
         // Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
@@ -298,6 +320,7 @@ public class GameStage extends Stage implements ContactListener {
             toBeDeleted.add(b);
         } else if((BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsBullet(b)) ||
                 ((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsEnemy(b)))){
+            makeEnemy = true;
             toBeDeleted.add(a);
             toBeDeleted.add(b);
         }
