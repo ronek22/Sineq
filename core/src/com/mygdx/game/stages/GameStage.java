@@ -20,6 +20,7 @@ import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
+import com.mygdx.game.actors.SpikeGround;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.enums.PlatformType;
 import com.mygdx.game.screens.Menu;
@@ -50,6 +51,7 @@ public class GameStage extends Stage implements ContactListener {
     private Wall right_wall;
     private FallingRock Rock;
     private Enemy enemy;
+    private SpikeGround spikes;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -88,7 +90,7 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
-        createWall();
+//        createWall();
 //        createFallingRock();
         createEnemy();
         createPlatforms();
@@ -167,9 +169,12 @@ public class GameStage extends Stage implements ContactListener {
 
 
     private void createPlatforms() {
+        float x;
         float randShift;
         platforms.add(new Platform(WorldUtils.createPlatform(world, 0)));
         addActor(platforms.get(platforms.size - 1));
+        x = WorldUtils.LastPlatformX;
+
         for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
 
             do { randShift = WorldUtils.generateRandomShift();
@@ -178,6 +183,10 @@ public class GameStage extends Stage implements ContactListener {
             platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
             addActor(platforms.get(platforms.size - 1));
         }
+        System.out.println("X: " + x);
+        spikes = new SpikeGround(WorldUtils.createSpikes(world, x, WorldUtils.LastPlatformX));
+        addActor(spikes);
+
         PlatformType.reset();
 
     }
@@ -237,6 +246,14 @@ public class GameStage extends Stage implements ContactListener {
             }
         }
 
+
+        // Spikes
+
+        if(toBeDeleted.contains(spikes.getBody(), false)){
+            spikes.getBody().setUserData(null);
+            spikes.addAction(Actions.removeActor());
+            spikes.remove();
+        }
 
         // Runner
         if(toBeDeleted.contains(runner.getBody(), false)){

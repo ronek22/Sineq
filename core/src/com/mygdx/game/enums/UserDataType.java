@@ -12,4 +12,5 @@ public enum UserDataType {
     WALL,
     FALLING_ROCK,
     BULLET,
+    SPIKE_GROUND
 }
