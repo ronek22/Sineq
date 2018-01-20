@@ -1,5 +1,6 @@
 package com.mygdx.game.stages;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,13 +14,19 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.mygdx.game.GameMain;
 import com.mygdx.game.actors.Bullet;
 import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
+import com.mygdx.game.actors.SpikeGround;
+import com.mygdx.game.enums.GameState;
+import com.mygdx.game.enums.PlatformType;
+import com.mygdx.game.screens.Menu;
 import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.Constants;
+import com.mygdx.game.utils.GameManager;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
@@ -33,6 +40,7 @@ import static com.mygdx.game.utils.WorldUtils.LastPlatformY;
 public class GameStage extends Stage implements ContactListener {
 
     // This will be our viewport measurements while working with the debug renderer
+    GameMain game;
     private static final int VIEWPORT_WIDTH = 20;
     private static final int VIEWPORT_HEIGHT = 13;
 
@@ -42,6 +50,8 @@ public class GameStage extends Stage implements ContactListener {
     private Wall left_wall;
     private Wall right_wall;
     private FallingRock Rock;
+    private Enemy enemy;
+    private SpikeGround spikes;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -55,14 +65,23 @@ public class GameStage extends Stage implements ContactListener {
     private Rectangle screenBottomLeftSide;
     private Vector3 touchPoint;
 
+
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Platform> platforms = new Array<Platform>();
     private Array<Body> toBeDeleted = new Array<Body>();
 
     // how many enemies
     private boolean shoot = false;
+    private boolean makeEnemy = false;
+    private boolean gameOver = false;
+    private boolean levelPlatform = true;
+    private boolean levelEnemy = false;
+    private int countEnemies = 0;
 
-    public GameStage() {
+
+    public GameStage(GameMain game) {
+        this.game = game;
+        GameManager.getInstance().setGameState(GameState.RUNNING);
         setUpWorld();
         setupCamera();
         setupTouchControlAreas();
@@ -75,9 +94,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpGround();
         setUpRunner();
         createWall();
-//        createFallingRock();
-//        createEnemy();
-        createPlatforms();
+
     }
 
     private void setUpGround() {
@@ -107,7 +124,7 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void act(float delta) {
         super.act(delta);
-
+     //   System.out.println("BODIES: " + world.getBodyCount());
         if(!world.isLocked()){
             Array<Body> bodies = new Array<Body>(world.getBodyCount());
             world.getBodies(bodies);
@@ -129,7 +146,7 @@ public class GameStage extends Stage implements ContactListener {
         if (!BodyUtils.bodyInBounds(body) ) {
             if ((BodyUtils.bodyIsEnemy(body) && !runner.isHit())) {
                 // zly warunek po zabiciu juz sie nie pokaza nastepni
-                createEnemy();
+                makeEnemy = true;
             } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
                 //createPlatform();
             }
@@ -140,9 +157,11 @@ public class GameStage extends Stage implements ContactListener {
 
 
     private void createEnemy() {
-        Enemy enemy = new Enemy(WorldUtils.createEnemy(world));
+        enemy = new Enemy(WorldUtils.createEnemy(world));
+        countEnemies++;
         addActor(enemy);
     }
+
     private void createWall(){
         right_wall = new Wall(WorldUtils.createRightWall(world));
         left_wall = new Wall(WorldUtils.createLeftWall(world));
@@ -153,9 +172,15 @@ public class GameStage extends Stage implements ContactListener {
 
 
     private void createPlatforms() {
+        float x;
         float randShift;
         platforms.add(new Platform(WorldUtils.createPlatform(world, 0)));
         addActor(platforms.get(platforms.size - 1));
+        x = WorldUtils.LastPlatformX;
+
+        createFallingRock(false);
+        createFallingRock(true);
+
         for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
 
             do { randShift = WorldUtils.generateRandomShift();
@@ -164,12 +189,16 @@ public class GameStage extends Stage implements ContactListener {
             platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
             addActor(platforms.get(platforms.size - 1));
         }
-        // TODO: Reset positions of PlatformType
+      //  System.out.println("X: " + x);
+        spikes = new SpikeGround(WorldUtils.createSpikes(world, x, WorldUtils.LastPlatformX));
+        addActor(spikes);
 
+        PlatformType.reset();
 
     }
-    private void createFallingRock() {
-        Rock = new FallingRock(WorldUtils.createFallingRock(world));
+
+    private void createFallingRock(boolean next) {
+        Rock = new FallingRock(WorldUtils.createFallingRock(world, next));
         addActor(Rock);
     }
 
@@ -181,6 +210,8 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void removeEmptyActors(){
+
+
 
         // ====== BULLETS =========
         Array<Integer> indexes = new Array<Integer>();
@@ -212,14 +243,42 @@ public class GameStage extends Stage implements ContactListener {
             platforms.removeIndex(ind);
         }
         indexes.clear();
+
+        // ===== ENEMY ==========
+        if(enemy != null) {
+            if(toBeDeleted.contains(enemy.getBody(), false)){
+                enemy.getBody().setUserData(null);
+                enemy.addAction(Actions.removeActor());
+                enemy.remove();
+            }
+        }
+
+
+        // Spikes
+
+        if(toBeDeleted.contains(spikes.getBody(), false)){
+            spikes.getBody().setUserData(null);
+            spikes.addAction(Actions.removeActor());
+            spikes.remove();
+        }
+        if(toBeDeleted.contains(Rock.getBody(), false)){
+            Rock.getBody().setUserData(null);
+            Rock.addAction(Actions.removeActor());
+            Rock.remove();
+        }
+
+        // Runner
+        if(toBeDeleted.contains(runner.getBody(), false)){
+            runner.getBody().setUserData(null);
+            runner.addAction(Actions.removeActor());
+            runner.remove();
+            gameOver = true;
+        }
+
+
     }
 
-
-
-    @Override
-    public void draw() {
-        super.draw();
-
+    private void cleanWorld(){
         if(toBeDeleted.size > 0){
             removeEmptyActors();
             if(!world.isLocked()) {
@@ -232,16 +291,68 @@ public class GameStage extends Stage implements ContactListener {
             }
             toBeDeleted.clear();
         }
+    }
+
+    private void gameLoop() {
+        if(!world.isLocked() && levelPlatform){
+            createPlatforms();
+            levelPlatform = false;
+        }
+
+        if(emptyLevel() && canMakeEnemies()){
+            createEnemy();
+        }
+
+        if(emptyLevel() && !canMakeEnemies()){
+            makeEnemy = false;
+            levelPlatform = true;
+            countEnemies = 0;
+        }
+
+        if(!world.isLocked() && levelEnemy && canMakeEnemies()){
+            levelEnemy = false;
+        }
+
+
 
         if(!world.isLocked() && shoot){
             createBullet();
             shoot = false;
         }
 
-        // Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
-        // Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
+        if(!world.isLocked() && makeEnemy && canMakeEnemies()){
+            createEnemy();
+            makeEnemy = false;
+        }
+
+        if(!world.isLocked() && gameOver){
+            System.out.println("GAME OVER");
+            onGameOver();
+        }
+    }
+
+
+    @Override
+    public void draw() {
+        super.draw();
+
+        cleanWorld();
+        gameLoop();
         renderer.render(world, camera.combined);
 
+    }
+
+    private boolean canMakeEnemies() {
+        return countEnemies < Constants.ENEMY_AMOUNT && emptyLevel();
+    }
+
+    private boolean emptyLevel() {
+        return world.getBodyCount() == 4;
+    }
+
+    private void onGameOver() {
+        GameManager.getInstance().setGameState(GameState.OVER);
+        ((Game)Gdx.app.getApplicationListener()).setScreen(new Menu(game));
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
@@ -280,17 +391,29 @@ public class GameStage extends Stage implements ContactListener {
         Body a = contact.getFixtureA().getBody();
         Body b = contact.getFixtureB().getBody();
 
-        if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b)) ||
-                (BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b))) {
+        if (BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b)) {
             runner.hit();
-        } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b)){
+            runner.hit();
+            toBeDeleted.add(b);
+        } else if(BodyUtils.bodyIsRock(b) && BodyUtils.bodyIsRunner(a)){
+            runner.hit();
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsSpikes(b)){
+            runner.hit();
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsSpikes(b)){
+            runner.hit();
+            toBeDeleted.add(b);
+        } else if((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
                 (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
             runner.landed();
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b)) ||
                 (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
             runner.platform();
             runner.landed();
-            System.out.println("LANDED ON PLATFORM");
+//            System.out.println("LANDED ON PLATFORM");
         }
         else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
             toBeDeleted.add(a);
@@ -298,6 +421,7 @@ public class GameStage extends Stage implements ContactListener {
             toBeDeleted.add(b);
         } else if((BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsBullet(b)) ||
                 ((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsEnemy(b)))){
+            makeEnemy = true;
             toBeDeleted.add(a);
             toBeDeleted.add(b);
         }
