@@ -8,14 +8,21 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mygdx.game.screens.GameScreen;
 import com.mygdx.game.screens.Menu;
+import com.mygdx.game.utils.GameEventListener;
+import com.mygdx.game.utils.GameManager;
 
 public class GameMain extends Game {
 
 	public SpriteBatch batch;
+
+	public GameMain(GameEventListener listener){
+		GameManager.getInstance().setGameEventListener(listener);
+	}
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		this.setScreen(new Menu(this));
+		setScreen(new Menu(this));
 	}
 
 	public void render(){

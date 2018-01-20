@@ -20,4 +20,8 @@ public class Enemy extends GameActor {
         body.setLinearVelocity(getUserData().getLinearVelocity());
     }
 
+    public Body getBody(){
+        return body;
+    }
+
 }

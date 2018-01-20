@@ -12,12 +12,24 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.mygdx.game.actors.Bullet;
+import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
+import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
+import com.mygdx.game.enums.GameState;
 import com.mygdx.game.utils.BodyUtils;
+import com.mygdx.game.utils.Constants;
+import com.mygdx.game.utils.GameManager;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.actors.Wall;
+
+
+
+import static com.mygdx.game.utils.WorldUtils.LastPlatformY;
 
 
 public class GameStage extends Stage implements ContactListener {
@@ -29,6 +41,10 @@ public class GameStage extends Stage implements ContactListener {
     private World world;
     private Ground ground;
     private Runner runner;
+    private Wall left_wall;
+    private Wall right_wall;
+    private FallingRock Rock;
+    private Enemy enemy;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -38,9 +54,23 @@ public class GameStage extends Stage implements ContactListener {
 
     // for controls
     private Rectangle screenRightSide;
+    private Rectangle screenTopLeftSide;
+    private Rectangle screenBottomLeftSide;
     private Vector3 touchPoint;
 
+
+    private Array<Bullet> bullets = new Array<Bullet>();
+    private Array<Platform> platforms = new Array<Platform>();
+    private Array<Body> toBeDeleted = new Array<Body>();
+
+    // how many enemies
+    private boolean shoot = false;
+    private boolean makeEnemy;
+    private boolean gameOver = false;
+
+
     public GameStage() {
+        GameManager.getInstance().setGameState(GameState.RUNNING);
         setUpWorld();
         setupCamera();
         setupTouchControlAreas();
@@ -52,7 +82,10 @@ public class GameStage extends Stage implements ContactListener {
         world.setContactListener(this);
         setUpGround();
         setUpRunner();
+        createWall();
+//        createFallingRock();
         createEnemy();
+        createPlatforms();
     }
 
     private void setUpGround() {
@@ -73,6 +106,8 @@ public class GameStage extends Stage implements ContactListener {
 
     private void setupTouchControlAreas() {
         touchPoint = new Vector3();
+        screenBottomLeftSide = new Rectangle(0, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
+        screenTopLeftSide = new Rectangle(0, getCamera().viewportHeight / 2, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
         screenRightSide = new Rectangle(getCamera().viewportWidth / 2, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
         Gdx.input.setInputProcessor(this);
     }
@@ -81,14 +116,14 @@ public class GameStage extends Stage implements ContactListener {
     public void act(float delta) {
         super.act(delta);
 
-        Array<Body> bodies = new Array<Body>(world.getBodyCount());
-        world.getBodies(bodies);
-
-        for (Body body : bodies) {
-            update(body);
+        if(!world.isLocked()){
+            Array<Body> bodies = new Array<Body>(world.getBodyCount());
+            world.getBodies(bodies);
+            for(Body body : bodies){
+                update(body);
+            }
         }
 
-        // Fixed timestep
         accumulator += delta;
 
         while (accumulator >= delta) {
@@ -96,28 +131,162 @@ public class GameStage extends Stage implements ContactListener {
             accumulator -= TIME_STEP;
         }
 
-        //TODO: Implement interpolation
-
     }
 
     private void update(Body body) {
-        if (!BodyUtils.bodyInBounds(body)) {
-            if (BodyUtils.bodyIsEnemy(body) && !runner.isHit()) {
-                createEnemy();
+        if (!BodyUtils.bodyInBounds(body) ) {
+            if ((BodyUtils.bodyIsEnemy(body) && !runner.isHit())) {
+                // zly warunek po zabiciu juz sie nie pokaza nastepni
+                makeEnemy = true;
+            } else if (BodyUtils.bodyIsPlatform(body) && runner.isOnPlatform()){
+                //createPlatform();
             }
-            world.destroyBody(body);
+            toBeDeleted.add(body);
         }
+
     }
 
+
     private void createEnemy() {
-        Enemy enemy = new Enemy(WorldUtils.createEnemy(world));
+        enemy = new Enemy(WorldUtils.createEnemy(world));
         addActor(enemy);
     }
+    private void createWall(){
+        right_wall = new Wall(WorldUtils.createRightWall(world));
+        left_wall = new Wall(WorldUtils.createLeftWall(world));
+        addActor(right_wall);
+        addActor(left_wall);
+    }
+
+
+
+    private void createPlatforms() {
+        float randShift;
+        platforms.add(new Platform(WorldUtils.createPlatform(world, 0)));
+        addActor(platforms.get(platforms.size - 1));
+        for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
+
+            do { randShift = WorldUtils.generateRandomShift();
+            }while((randShift + LastPlatformY ) < 2);
+
+            platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
+            addActor(platforms.get(platforms.size - 1));
+        }
+        // TODO: Reset positions of PlatformType
+
+
+    }
+    private void createFallingRock() {
+        Rock = new FallingRock(WorldUtils.createFallingRock(world));
+        addActor(Rock);
+    }
+
+    private void createBullet() {
+        Gdx.app.log("Check Position of Runner", runner.getX() + " : " + runner.getY());
+        bullets.add(new Bullet(WorldUtils.createBullet(world, runner.getX() + Constants.RUNNER_WIDTH, runner.getY())));
+        addActor(bullets.get(bullets.size-1));
+
+    }
+
+    private void removeEmptyActors(){
+
+
+
+        // ====== BULLETS =========
+        Array<Integer> indexes = new Array<Integer>();
+        for(Bullet bullet : bullets){
+            if(toBeDeleted.contains(bullet.getBody(), false)){
+                indexes.add(bullets.indexOf(bullet, true));
+                bullet.getBody().setUserData(null);
+                bullet.addAction(Actions.removeActor());
+            }
+        }
+
+        for(int ind : indexes){
+            bullets.get(ind).remove();
+            bullets.removeIndex(ind);
+        }
+        indexes.clear();
+
+        // ====== PLATFORMS =========
+        for(Platform platform : platforms) {
+            if (toBeDeleted.contains(platform.getBody(), false)) {
+                indexes.add(platforms.indexOf(platform, true));
+                platform.getBody().setUserData(null);
+                platform.addAction(Actions.removeActor());
+            }
+        }
+
+        for(int ind : indexes){
+            platforms.get(ind).remove();
+            platforms.removeIndex(ind);
+        }
+        indexes.clear();
+
+        // ===== ENEMY ==========
+        if(enemy != null) {
+            if(toBeDeleted.contains(enemy.getBody(), false)){
+                enemy.getBody().setUserData(null);
+                enemy.addAction(Actions.removeActor());
+                enemy.remove();
+            }
+        }
+
+
+        // Runner
+        if(toBeDeleted.contains(runner.getBody(), false)){
+            runner.getBody().setUserData(null);
+            runner.addAction(Actions.removeActor());
+            runner.remove();
+            gameOver = true;
+        }
+
+
+    }
+
+
 
     @Override
     public void draw() {
         super.draw();
+
+        if(toBeDeleted.size > 0){
+            removeEmptyActors();
+            if(!world.isLocked()) {
+                for (Body body : toBeDeleted)
+                {
+                    world.destroyBody(body);
+                    body.setUserData(null);
+                }
+
+            }
+            toBeDeleted.clear();
+        }
+
+        if(!world.isLocked() && shoot){
+            createBullet();
+            shoot = false;
+        }
+
+        if(!world.isLocked() && makeEnemy){
+            createEnemy();
+            makeEnemy = false;
+        }
+
+        if(!world.isLocked() && gameOver){
+            System.out.println("GAME OVER");
+            // GameManager.getInstance().submitScore(score.getScore());
+            onGameOver();
+        }
+
+        // Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
+        // Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
         renderer.render(world, camera.combined);
+
+    }
+
+    private void onGameOver() {
+        GameManager.getInstance().setGameState(GameState.OVER);
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
@@ -128,12 +297,23 @@ public class GameStage extends Stage implements ContactListener {
         if (rightSideTouched(touchPoint.x, touchPoint.y)) {
             runner.jump();
         }
+        else if (leftTopSideTouched(touchPoint.x, touchPoint.y)) {
+            runner.move();
+        } else if (leftBottomSideTouched(touchPoint.x, touchPoint.y)) {
+            shoot = true;
+        }
 
         return super.touchDown(x, y, pointer, button);
     }
 
     private boolean rightSideTouched(float x, float y) {
         return screenRightSide.contains(x, y);
+    }
+    private boolean leftTopSideTouched(float x, float y) {
+        return screenTopLeftSide.contains(x, y);
+    }
+    private boolean leftBottomSideTouched(float x, float y){
+        return screenBottomLeftSide.contains(x, y);
     }
 
     private void translateScreenToWorldCoordinates(int x, int y) {
@@ -145,12 +325,30 @@ public class GameStage extends Stage implements ContactListener {
         Body a = contact.getFixtureA().getBody();
         Body b = contact.getFixtureB().getBody();
 
-        if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b)) ||
-                (BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b))) {
+        if (BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b)) {
             runner.hit();
-        } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b)){
+            runner.hit();
+            toBeDeleted.add(b);
+        } else if((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
                 (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
             runner.landed();
+        } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b)) ||
+                (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
+            runner.platform();
+            runner.landed();
+            System.out.println("LANDED ON PLATFORM");
+        }
+        else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsBullet(b)) {
+            toBeDeleted.add(b);
+        } else if((BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsBullet(b)) ||
+                ((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsEnemy(b)))){
+            makeEnemy = true;
+            toBeDeleted.add(a);
+            toBeDeleted.add(b);
         }
     }
 

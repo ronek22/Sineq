@@ -7,5 +7,9 @@ package com.mygdx.game.enums;
 public enum UserDataType {
     GROUND,
     RUNNER,
-    ENEMY
+    ENEMY,
+    PLATFORM,
+    WALL,
+    FALLING_ROCK,
+    BULLET,
 }
