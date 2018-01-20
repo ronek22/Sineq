@@ -1,5 +1,6 @@
 package com.mygdx.game.stages;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -19,6 +20,8 @@ import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.enums.PlatformType;
+import com.mygdx.game.screens.Menu;
 import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.Constants;
 import com.mygdx.game.utils.GameManager;
@@ -172,8 +175,7 @@ public class GameStage extends Stage implements ContactListener {
             platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
             addActor(platforms.get(platforms.size - 1));
         }
-        // TODO: Reset positions of PlatformType
-
+        PlatformType.reset();
 
     }
     private void createFallingRock() {
@@ -287,6 +289,7 @@ public class GameStage extends Stage implements ContactListener {
 
     private void onGameOver() {
         GameManager.getInstance().setGameState(GameState.OVER);
+        ((Game)Gdx.app.getApplicationListener()).setScreen(new Menu());
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
