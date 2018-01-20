@@ -23,4 +23,13 @@ public class Platform extends GameActor {
         super.act(delta);
         body.setLinearVelocity(getUserData().getLinearVelocity());
     }
+
+    @Override
+    public String toString(){
+        return String.valueOf(getUserData().getWidth());
+    }
+
+    public Body getBody(){
+        return body;
+    }
 }

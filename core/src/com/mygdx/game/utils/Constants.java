@@ -46,15 +46,23 @@ public class Constants {
     public static final float WALL_WIDTH = 0.1f;
     public static float WALL_DENSITY = 0.5f;
 
-    public static final float PLATFORM_X = 27f;
+    public static final float PLATFORM_X = 17f;
     public static final float PLATFORM_Y = 2f;
+    public static final float PLATFORM_RAND_DIFF = 2f;
+    public static final int PLATFORM_AMOUNT = 10;
     public static final float PLATFORM_DENSITY = 0f;
     public static final float PLATFORM_FRICTION = 0f;
-    public static final Vector2 PLATFORM_LINEAR_VELOCITY = new Vector2(-10f, 0);
+    public static final Vector2 PLATFORM_LINEAR_VELOCITY = new Vector2(-5f, 0);
 
     //FALLING ROCKS
     public static final Vector2 FALLING_ROCK_LINEAR_VELOCITY = new Vector2(-1f, 0);
     public static final float FALLING_ROCK_GRAVITY_SCALE = 15f;
+
+    //BULLETS
+    public static final float BULLET_WIDTH = 0.2f;
+    public static final float BULLET_HEIGHT = 0.2f;
+    public static final float BULLET_DENSITY = 0.5f;
+    public static final Vector2 BULLET_LINEAR_VELOCITY = new Vector2(15f, 0);
 
 
 

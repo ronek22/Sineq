@@ -27,6 +27,7 @@ public class Runner extends GameActor {
         if(!jumping){
             body.applyLinearImpulse(getUserData().getJumpingLinearImpulse(), body.getWorldCenter(), true);
             jumping = true;
+            onPlatform = false;
         }
     }
 
@@ -45,9 +46,10 @@ public class Runner extends GameActor {
         jumping = false;
     }
 
-    public float getPosition(){
+    public float getX(){
         return body.getPosition().x;
     }
+    public float getY() { return body.getPosition().y; }
 
 
     public void hit() {
@@ -63,6 +65,7 @@ public class Runner extends GameActor {
     public void platform(){
         onPlatform = true;
     }
+
 
     public boolean isOnPlatform() { return onPlatform; }
 
