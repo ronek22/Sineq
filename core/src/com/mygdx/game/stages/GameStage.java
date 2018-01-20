@@ -20,6 +20,7 @@ import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
+import com.mygdx.game.actors.Score;
 import com.mygdx.game.actors.SpikeGround;
 import com.mygdx.game.enums.Difficulty;
 import com.mygdx.game.enums.GameState;
@@ -78,9 +79,9 @@ public class GameStage extends Stage implements ContactListener {
     private boolean levelPlatform = true;
     private boolean levelEnemy = false;
     private int countEnemies = 0;
-
     private int MAX_PLATFORM;
     private int MAX_ENEMIES;
+    private Score score;
     private float totalTimePassed;
 
 
@@ -90,7 +91,8 @@ public class GameStage extends Stage implements ContactListener {
         GameManager.getInstance().setDifficulty(Difficulty.DIF_1);
         setUpDifficulty();
         setUpWorld();
-        setupCamera();
+        setUpCamera();
+        setUpScore();
         setupTouchControlAreas();
         renderer = new Box2DDebugRenderer();
     }
@@ -121,10 +123,15 @@ public class GameStage extends Stage implements ContactListener {
         addActor(runner);
     }
 
-    private void setupCamera() {
+    private void setUpCamera() {
         camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0f);
         camera.update();
+    }
+
+    private void setUpScore(){
+        score = new Score();
+        addActor(score);
     }
 
     private void setupTouchControlAreas() {
@@ -149,7 +156,7 @@ public class GameStage extends Stage implements ContactListener {
         MAX_ENEMIES = current.getAmountEnemies();
         MAX_PLATFORM = current.getAmountPlatform();
         runner.onDifficultyChange(current);
-//            score.setMultiplier(GameManager.getInstance().getDifficulty().getScoreMultiplier());
+        score.setMultiplier(GameManager.getInstance().getDifficulty().getScoreMultiplier());
 
     }
 
@@ -161,7 +168,7 @@ public class GameStage extends Stage implements ContactListener {
         if (GameManager.getInstance().getGameState() == GameState.RUNNING) {
             totalTimePassed += delta;
         }
-//        System.out.println(GameManager.getInstance().getDifficulty().getLevel());
+        System.out.println("SCORE: " + score.getScore());
 
         //   System.out.println("BODIES: " + world.getBodyCount());
         if(!world.isLocked()){
