@@ -176,6 +176,9 @@ public class WorldUtils {
         fixture.shape = shape;
         fixture.density = Constants.BULLET_DENSITY;
         fixture.friction = 0f;
+        fixture.filter.categoryBits = 2;
+        fixture.filter.maskBits = 1;
+        fixture.filter.groupIndex = -1;
         body.createFixture(fixture);
         body.setUserData(new BulletUserData(Constants.BULLET_WIDTH, Constants.BULLET_HEIGHT));
         shape.dispose();
