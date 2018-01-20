@@ -1,4 +1,5 @@
 # Sineq
+### Tabelka z [Zadaniami](https://docs.google.com/spreadsheets/d/1BypFIafhVVTjv7vNVr8oSsat7g7ht2KIvQ8CR8vwZyM/edit#gid=796185151)
 ## Jak sklonować repozytorium do siebie?
 1. Odpalasz **Android Studio** -> **New** -> **Check out project from Version Control** -> **GitHub**
 2. Jako **Git Repository URL:** `https://github.com/ronek22/Sineq2.git`
