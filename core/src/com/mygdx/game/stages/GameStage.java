@@ -49,7 +49,6 @@ public class GameStage extends Stage implements ContactListener {
     private Runner runner;
     private Wall left_wall;
     private Wall right_wall;
-    private FallingRock Rock;
     private Enemy enemy;
     private SpikeGround spikes;
 
@@ -69,6 +68,7 @@ public class GameStage extends Stage implements ContactListener {
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Platform> platforms = new Array<Platform>();
     private Array<Body> toBeDeleted = new Array<Body>();
+    private Array<FallingRock> rocks = new Array<FallingRock>();
 
     // how many enemies
     private boolean shoot = false;
@@ -198,8 +198,8 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void createFallingRock(boolean next) {
-        Rock = new FallingRock(WorldUtils.createFallingRock(world, next));
-        addActor(Rock);
+        rocks.add(new FallingRock(WorldUtils.createFallingRock(world, next)));
+        addActor(rocks.get(rocks.size-1));
     }
 
     private void createBullet() {
@@ -261,11 +261,20 @@ public class GameStage extends Stage implements ContactListener {
             spikes.addAction(Actions.removeActor());
             spikes.remove();
         }
-        if(toBeDeleted.contains(Rock.getBody(), false)){
-            Rock.getBody().setUserData(null);
-            Rock.addAction(Actions.removeActor());
-            Rock.remove();
+        // ======= ROCKS =========
+        for(FallingRock rock : rocks) {
+            if (toBeDeleted.contains(rock.getBody(), false)) {
+                indexes.add(rocks.indexOf(rock, true));
+                rock.getBody().setUserData(null);
+                rock.addAction(Actions.removeActor());
+            }
         }
+
+        for(int ind : indexes){
+           rocks.get(ind).remove();
+           rocks.removeIndex(ind);
+        }
+        indexes.clear();
 
         // Runner
         if(toBeDeleted.contains(runner.getBody(), false)){
