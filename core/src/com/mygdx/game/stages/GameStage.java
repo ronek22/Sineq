@@ -75,7 +75,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpGround();
         setUpRunner();
         createWall();
-        createFallingRock();
+//        createFallingRock();
 //        createEnemy();
         createPlatforms();
     }
@@ -98,8 +98,8 @@ public class GameStage extends Stage implements ContactListener {
 
     private void setupTouchControlAreas() {
         touchPoint = new Vector3();
-        screenTopLeftSide = new Rectangle(0, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
-        screenBottomLeftSide = new Rectangle(0, getCamera().viewportHeight / 2, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
+        screenBottomLeftSide = new Rectangle(0, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
+        screenTopLeftSide = new Rectangle(0, getCamera().viewportHeight / 2, getCamera().viewportWidth / 2, getCamera().viewportHeight / 2);
         screenRightSide = new Rectangle(getCamera().viewportWidth / 2, 0, getCamera().viewportWidth / 2, getCamera().viewportHeight);
         Gdx.input.setInputProcessor(this);
     }
@@ -196,8 +196,8 @@ public class GameStage extends Stage implements ContactListener {
             bullets.get(ind).remove();
             bullets.removeIndex(ind);
         }
-
         indexes.clear();
+
         // ====== PLATFORMS =========
         for(Platform platform : platforms) {
             if (toBeDeleted.contains(platform.getBody(), false)) {
@@ -211,6 +211,7 @@ public class GameStage extends Stage implements ContactListener {
             platforms.get(ind).remove();
             platforms.removeIndex(ind);
         }
+        indexes.clear();
     }
 
 
