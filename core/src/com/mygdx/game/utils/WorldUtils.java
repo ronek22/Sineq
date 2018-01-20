@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.mygdx.game.actors.FallingRock;
+import com.mygdx.game.actors.SpikeGround;
 import com.mygdx.game.enums.PlatformType;
 import com.mygdx.game.physics.BulletUserData;
 import com.mygdx.game.physics.FallingRockUserData;
@@ -16,6 +17,7 @@ import com.mygdx.game.physics.PlatformUserData;
 import com.mygdx.game.physics.RunnerUserData;
 import com.mygdx.game.physics.EnemyUserData;
 import com.mygdx.game.enums.EnemyType;
+import com.mygdx.game.physics.SpikeGroundUserData;
 import com.mygdx.game.physics.WallUserData;
 
 import java.util.Random;
@@ -23,6 +25,8 @@ import java.util.Random;
 public class WorldUtils {
     static Random r = new Random();
     public static float LastPlatformY;
+    public static float LastPlatformX;
+    public static String LastPlatformType;
 
     public static World createWorld() {
         return new World(Constants.WORLD_GRAVITY, true);
@@ -64,8 +68,11 @@ public class WorldUtils {
         PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight());
         System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().y + ") : " + platformType.getName());
         LastPlatformY = body.getPosition().y;
+        LastPlatformX = body.getPosition().x - platformType.getWidth() / 2;
+        LastPlatformType = platformType.getName();
         body.setUserData(userData);
         shape.dispose();
+
         return body;
     }
 
@@ -125,6 +132,22 @@ public class WorldUtils {
         WallUserData userData = new WallUserData(Constants.WALL_WIDTH,Constants.WALL_HEIGHT);
         body.setUserData(userData);
         shape.dispose();
+        return body;
+    }
+
+    public static Body createSpikes(World world, float x, float y) {
+        y = y + PlatformType.valueOf(LastPlatformType).getWidth();
+
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.KinematicBody;
+        bodyDef.position.set(new Vector2(x+((y - x) / 2), Constants.SPIKE_GROUND_Y));
+        Body body = world.createBody(bodyDef);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox((y-x) / 2, Constants.SPIKE_GROUND_HEIGHT);
+        body.createFixture(shape, Constants.SPIKE_GROUND_DENSITY);
+        body.setUserData(new SpikeGroundUserData((y-x) / 2, Constants.SPIKE_GROUND_HEIGHT));
+        shape.dispose();
+        System.out.println("SPIKE: (" + body.getPosition().x + ", " + body.getPosition().y + ")");
         return body;
     }
     public static Body createEnemy(World world) {

@@ -3,6 +3,7 @@ package com.mygdx.game.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.mygdx.game.GameMain;
 import com.mygdx.game.stages.GameStage;
 
 /**
@@ -12,9 +13,11 @@ import com.mygdx.game.stages.GameStage;
 public class GameScreen implements Screen {
 
     private GameStage stage;
+    GameMain game;
 
-    public GameScreen() {
-        stage = new GameStage();
+    public GameScreen(GameMain game) {
+        this.game = game;
+        stage = new GameStage(game);
     }
     @Override
     public void render(float delta) {

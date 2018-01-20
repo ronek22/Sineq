@@ -32,6 +32,7 @@ public class Constants {
 
     public static final float ENEMY_X = 25f;
     public static final float ENEMY_DENSITY = RUNNER_DENSITY;
+    public static final int ENEMY_AMOUNT = 3;
     public static final float RUNNING_SHORT_ENEMY_Y = 1.5f;
     public static final float RUNNING_LONG_ENEMY_Y = 2f;
     public static final float FLYING_ENEMY_Y = 3f;
@@ -64,6 +65,10 @@ public class Constants {
     public static final float BULLET_DENSITY = 0.5f;
     public static final Vector2 BULLET_LINEAR_VELOCITY = new Vector2(15f, 0);
 
+//    //SPIKEGROUND
+    public static final float SPIKE_GROUND_Y = 1.25f;
+    public static final float SPIKE_GROUND_HEIGHT = 0.2f;
+    public static final float SPIKE_GROUND_DENSITY = 0f;
 
 
 

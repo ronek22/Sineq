@@ -22,6 +22,8 @@ public class BodyUtils {
                 return body.getPosition().x + userData.getWidth() / 2 > 0;
             case BULLET:
                 return body.getPosition().x + userData.getWidth() / 2 < 20;
+            case SPIKE_GROUND:
+                return body.getPosition().x + userData.getWidth() > 0;
         }
 
         return true;
@@ -56,6 +58,12 @@ public class BodyUtils {
         UserData userData = (UserData) body.getUserData();
 
         return userData != null && userData.getUserDataType() == UserDataType.BULLET;
+    }
+
+    public static boolean bodyIsSpikes(Body body){
+        UserData userData = (UserData) body.getUserData();
+
+        return userData != null && userData.getUserDataType() == UserDataType.SPIKE_GROUND;
     }
 
 }

@@ -69,6 +69,9 @@ public class Runner extends GameActor {
 
     public boolean isOnPlatform() { return onPlatform; }
 
+    public Body getBody(){
+        return body;
+    }
 
 
 
