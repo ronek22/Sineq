@@ -142,16 +142,14 @@ public class GameStage extends Stage implements ContactListener {
 
         Difficulty current = GameManager.getInstance().getDifficulty();
 
-
-
-            int nextDifficulty = current.getLevel() + 1;
-            String difficultyName = "DIF_" + nextDifficulty;
-            GameManager.getInstance().setDifficulty(Difficulty.valueOf(difficultyName));
-
-            runner.onDifficultyChange(GameManager.getInstance().getDifficulty());
+        int nextDifficulty = current.getLevel() + 1;
+        String difficultyName = "DIF_" + nextDifficulty;
+        GameManager.getInstance().setDifficulty(Difficulty.valueOf(difficultyName));
+        current = GameManager.getInstance().getDifficulty();
+        MAX_ENEMIES = current.getAmountEnemies();
+        MAX_PLATFORM = current.getAmountPlatform();
+        runner.onDifficultyChange(current);
 //            score.setMultiplier(GameManager.getInstance().getDifficulty().getScoreMultiplier());
-
-//            displayAd();
 
     }
 
@@ -163,7 +161,7 @@ public class GameStage extends Stage implements ContactListener {
         if (GameManager.getInstance().getGameState() == GameState.RUNNING) {
             totalTimePassed += delta;
         }
-        System.out.println(GameManager.getInstance().getDifficulty().getLevel());
+//        System.out.println(GameManager.getInstance().getDifficulty().getLevel());
 
         //   System.out.println("BODIES: " + world.getBodyCount());
         if(!world.isLocked()){
