@@ -14,13 +14,14 @@ import com.mygdx.game.stages.GameStage;
 
 public class Menu implements Screen{
 
+    GameMain game;
     Texture playButtonActive;
     Texture playButtonInactive;
     Texture exitButtonActive;
     Texture exitButtonInactive;
 
-    public Menu(){
-
+    public Menu(GameMain game){
+        this.game = game;
         playButtonActive = new Texture("play.png");
         playButtonInactive = new Texture("play2.png");
         exitButtonActive = new Texture("exit.png");
@@ -35,12 +36,27 @@ public class Menu implements Screen{
 
     @Override
     public void render(float delta) {
-
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        game.getBatch().begin();
+
+        if(Gdx.input.getX() < 50 + 200 && Gdx.input.getX() > 50 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
+            game.getBatch().draw(playButtonActive, 50, 200);
             if(Gdx.input.isTouched()) {
-                ((Game) Gdx.app.getApplicationListener()).setScreen(new GameScreen());
+                game.setScreen(new GameScreen(game));
             }
+        }else {
+            game.getBatch().draw(playButtonInactive, 50, 200);
+        }
+        if(Gdx.input.getX() < 550 + 200 && Gdx.input.getX() > 550 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
+            game.getBatch().draw(exitButtonActive, 550, 200);
+            if(Gdx.input.isTouched()) {
+                Gdx.app.exit();
+            }
+        }else {
+            game.getBatch().draw(exitButtonInactive, 550, 200);
+        }
+        game.getBatch().end();
 
     }
 
