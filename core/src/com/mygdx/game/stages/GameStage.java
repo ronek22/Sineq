@@ -18,8 +18,10 @@ import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
+import com.mygdx.game.enums.GameState;
 import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.Constants;
+import com.mygdx.game.utils.GameManager;
 import com.mygdx.game.utils.WorldUtils;
 import com.mygdx.game.actors.Enemy;
 import com.badlogic.gdx.utils.Array;
@@ -64,9 +66,11 @@ public class GameStage extends Stage implements ContactListener {
     // how many enemies
     private boolean shoot = false;
     private boolean makeEnemy;
+    private boolean gameOver = false;
 
 
     public GameStage() {
+        GameManager.getInstance().setGameState(GameState.RUNNING);
         setUpWorld();
         setupCamera();
         setupTouchControlAreas();
@@ -229,6 +233,15 @@ public class GameStage extends Stage implements ContactListener {
         }
 
 
+        // Runner
+        if(toBeDeleted.contains(runner.getBody(), false)){
+            runner.getBody().setUserData(null);
+            runner.addAction(Actions.removeActor());
+            runner.remove();
+            gameOver = true;
+        }
+
+
     }
 
 
@@ -260,10 +273,20 @@ public class GameStage extends Stage implements ContactListener {
             makeEnemy = false;
         }
 
+        if(!world.isLocked() && gameOver){
+            System.out.println("GAME OVER");
+            // GameManager.getInstance().submitScore(score.getScore());
+            onGameOver();
+        }
+
         // Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
         // Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
         renderer.render(world, camera.combined);
 
+    }
+
+    private void onGameOver() {
+        GameManager.getInstance().setGameState(GameState.OVER);
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
@@ -302,10 +325,13 @@ public class GameStage extends Stage implements ContactListener {
         Body a = contact.getFixtureA().getBody();
         Body b = contact.getFixtureB().getBody();
 
-        if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b)) ||
-                (BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b))) {
+        if (BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b)) {
             runner.hit();
-        } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b)){
+            runner.hit();
+            toBeDeleted.add(b);
+        } else if((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
                 (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
             runner.landed();
         } else if ((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsPlatform(b)) ||
