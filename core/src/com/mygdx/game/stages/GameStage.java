@@ -72,8 +72,11 @@ public class GameStage extends Stage implements ContactListener {
 
     // how many enemies
     private boolean shoot = false;
-    private boolean makeEnemy;
+    private boolean makeEnemy = false;
     private boolean gameOver = false;
+    private boolean levelPlatform = true;
+    private boolean levelEnemy = false;
+    private int countEnemies = 0;
 
 
     public GameStage(GameMain game) {
@@ -92,8 +95,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpRunner();
         createWall();
 //        createFallingRock();
-        createEnemy();
-        createPlatforms();
+
     }
 
     private void setUpGround() {
@@ -123,7 +125,7 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void act(float delta) {
         super.act(delta);
-
+        System.out.println("BODIES: " + world.getBodyCount());
         if(!world.isLocked()){
             Array<Body> bodies = new Array<Body>(world.getBodyCount());
             world.getBodies(bodies);
@@ -157,8 +159,10 @@ public class GameStage extends Stage implements ContactListener {
 
     private void createEnemy() {
         enemy = new Enemy(WorldUtils.createEnemy(world));
+        countEnemies++;
         addActor(enemy);
     }
+
     private void createWall(){
         right_wall = new Wall(WorldUtils.createRightWall(world));
         left_wall = new Wall(WorldUtils.createLeftWall(world));
@@ -190,6 +194,7 @@ public class GameStage extends Stage implements ContactListener {
         PlatformType.reset();
 
     }
+
     private void createFallingRock() {
         Rock = new FallingRock(WorldUtils.createFallingRock(world));
         addActor(Rock);
@@ -266,12 +271,7 @@ public class GameStage extends Stage implements ContactListener {
 
     }
 
-
-
-    @Override
-    public void draw() {
-        super.draw();
-
+    private void cleanWorld(){
         if(toBeDeleted.size > 0){
             removeEmptyActors();
             if(!world.isLocked()) {
@@ -284,27 +284,63 @@ public class GameStage extends Stage implements ContactListener {
             }
             toBeDeleted.clear();
         }
+    }
+
+    private void gameLoop() {
+        if(!world.isLocked() && levelPlatform){
+            createPlatforms();
+            levelPlatform = false;
+        }
+
+        if(emptyLevel() && canMakeEnemies()){
+            createEnemy();
+        }
+
+        if(emptyLevel() && !canMakeEnemies()){
+            makeEnemy = false;
+            levelPlatform = true;
+            countEnemies = 0;
+        }
+
+        if(!world.isLocked() && levelEnemy && canMakeEnemies()){
+            levelEnemy = false;
+        }
+
+
 
         if(!world.isLocked() && shoot){
             createBullet();
             shoot = false;
         }
 
-        if(!world.isLocked() && makeEnemy){
+        if(!world.isLocked() && makeEnemy && canMakeEnemies()){
             createEnemy();
             makeEnemy = false;
         }
 
         if(!world.isLocked() && gameOver){
             System.out.println("GAME OVER");
-            // GameManager.getInstance().submitScore(score.getScore());
             onGameOver();
         }
+    }
 
-        // Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
-        // Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
+
+    @Override
+    public void draw() {
+        super.draw();
+
+        cleanWorld();
+        gameLoop();
         renderer.render(world, camera.combined);
 
+    }
+
+    private boolean canMakeEnemies() {
+        return countEnemies < Constants.ENEMY_AMOUNT && emptyLevel();
+    }
+
+    private boolean emptyLevel() {
+        return world.getBodyCount() == 4;
     }
 
     private void onGameOver() {

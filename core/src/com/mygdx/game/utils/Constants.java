@@ -32,6 +32,7 @@ public class Constants {
 
     public static final float ENEMY_X = 25f;
     public static final float ENEMY_DENSITY = RUNNER_DENSITY;
+    public static final int ENEMY_AMOUNT = 3;
     public static final float RUNNING_SHORT_ENEMY_Y = 1.5f;
     public static final float RUNNING_LONG_ENEMY_Y = 2f;
     public static final float FLYING_ENEMY_Y = 3f;
