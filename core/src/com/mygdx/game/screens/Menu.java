@@ -1,5 +1,6 @@
 package com.mygdx.game.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,14 +15,12 @@ import com.mygdx.game.stages.GameStage;
 public class Menu implements Screen{
 
     GameMain game;
-
     Texture playButtonActive;
     Texture playButtonInactive;
     Texture exitButtonActive;
     Texture exitButtonInactive;
 
     public Menu(GameMain game){
-
         this.game = game;
         playButtonActive = new Texture("play.png");
         playButtonInactive = new Texture("play2.png");
@@ -37,25 +36,27 @@ public class Menu implements Screen{
 
     @Override
     public void render(float delta) {
-        game.batch.begin();
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        game.getBatch().begin();
 
         if(Gdx.input.getX() < 50 + 200 && Gdx.input.getX() > 50 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
-            game.batch.draw(playButtonActive, 50, 200);
+            game.getBatch().draw(playButtonActive, 50, 200);
             if(Gdx.input.isTouched()) {
-                game.setScreen(new GameScreen());
+                game.setScreen(new GameScreen(game));
             }
         }else {
-            game.batch.draw(playButtonInactive, 50, 200);
+            game.getBatch().draw(playButtonInactive, 50, 200);
         }
         if(Gdx.input.getX() < 550 + 200 && Gdx.input.getX() > 550 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
-            game.batch.draw(exitButtonActive, 550, 200);
+            game.getBatch().draw(exitButtonActive, 550, 200);
             if(Gdx.input.isTouched()) {
                 Gdx.app.exit();
             }
         }else {
-            game.batch.draw(exitButtonInactive, 550, 200);
+            game.getBatch().draw(exitButtonInactive, 550, 200);
         }
-        game.batch.end();
+        game.getBatch().end();
 
     }
 

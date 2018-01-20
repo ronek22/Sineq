@@ -66,6 +66,7 @@ public class WorldUtils {
         LastPlatformY = body.getPosition().y;
         body.setUserData(userData);
         shape.dispose();
+
         return body;
     }
 
