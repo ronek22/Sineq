@@ -70,4 +70,12 @@ public enum PlatformType {
     public String getName() {
         return this.name();
     }
+
+    public static void reset() {
+        PlatformType.WIDE.setX(Constants.PLATFORM_X);
+        PlatformType.WIDE.setY(Constants.PLATFORM_Y);
+
+        PlatformType.DEFAULT.setX(Constants.PLATFORM_X);
+        PlatformType.DEFAULT.setY(Constants.PLATFORM_Y);
+    }
 }

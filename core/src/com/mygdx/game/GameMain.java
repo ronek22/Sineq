@@ -13,7 +13,7 @@ import com.mygdx.game.utils.GameManager;
 
 public class GameMain extends Game {
 
-	public SpriteBatch batch;
+	private SpriteBatch batch;
 
 	public GameMain(GameEventListener listener){
 		GameManager.getInstance().setGameEventListener(listener);
@@ -23,6 +23,10 @@ public class GameMain extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 		setScreen(new Menu(this));
+	}
+
+	public SpriteBatch getBatch() {
+		return batch;
 	}
 
 	public void render(){

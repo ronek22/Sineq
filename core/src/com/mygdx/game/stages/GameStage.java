@@ -1,5 +1,6 @@
 package com.mygdx.game.stages;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,12 +14,16 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.mygdx.game.GameMain;
 import com.mygdx.game.actors.Bullet;
 import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
 import com.mygdx.game.actors.Platform;
 import com.mygdx.game.actors.Runner;
+import com.mygdx.game.actors.SpikeGround;
 import com.mygdx.game.enums.GameState;
+import com.mygdx.game.enums.PlatformType;
+import com.mygdx.game.screens.Menu;
 import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.Constants;
 import com.mygdx.game.utils.GameManager;
@@ -35,6 +40,7 @@ import static com.mygdx.game.utils.WorldUtils.LastPlatformY;
 public class GameStage extends Stage implements ContactListener {
 
     // This will be our viewport measurements while working with the debug renderer
+    GameMain game;
     private static final int VIEWPORT_WIDTH = 20;
     private static final int VIEWPORT_HEIGHT = 13;
 
@@ -43,8 +49,8 @@ public class GameStage extends Stage implements ContactListener {
     private Runner runner;
     private Wall left_wall;
     private Wall right_wall;
-    private FallingRock Rock;
     private Enemy enemy;
+    private SpikeGround spikes;
 
     private final float TIME_STEP = 1 / 300f;
     private float accumulator = 0f;
@@ -62,14 +68,19 @@ public class GameStage extends Stage implements ContactListener {
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Platform> platforms = new Array<Platform>();
     private Array<Body> toBeDeleted = new Array<Body>();
+    private Array<FallingRock> rocks = new Array<FallingRock>();
 
     // how many enemies
     private boolean shoot = false;
-    private boolean makeEnemy;
+    private boolean makeEnemy = false;
     private boolean gameOver = false;
+    private boolean levelPlatform = true;
+    private boolean levelEnemy = false;
+    private int countEnemies = 0;
 
 
-    public GameStage() {
+    public GameStage(GameMain game) {
+        this.game = game;
         GameManager.getInstance().setGameState(GameState.RUNNING);
         setUpWorld();
         setupCamera();
@@ -83,9 +94,7 @@ public class GameStage extends Stage implements ContactListener {
         setUpGround();
         setUpRunner();
         createWall();
-//        createFallingRock();
-        createEnemy();
-        createPlatforms();
+
     }
 
     private void setUpGround() {
@@ -115,7 +124,7 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void act(float delta) {
         super.act(delta);
-
+     //   System.out.println("BODIES: " + world.getBodyCount());
         if(!world.isLocked()){
             Array<Body> bodies = new Array<Body>(world.getBodyCount());
             world.getBodies(bodies);
@@ -149,8 +158,10 @@ public class GameStage extends Stage implements ContactListener {
 
     private void createEnemy() {
         enemy = new Enemy(WorldUtils.createEnemy(world));
+        countEnemies++;
         addActor(enemy);
     }
+
     private void createWall(){
         right_wall = new Wall(WorldUtils.createRightWall(world));
         left_wall = new Wall(WorldUtils.createLeftWall(world));
@@ -161,9 +172,15 @@ public class GameStage extends Stage implements ContactListener {
 
 
     private void createPlatforms() {
+        float x;
         float randShift;
         platforms.add(new Platform(WorldUtils.createPlatform(world, 0)));
         addActor(platforms.get(platforms.size - 1));
+        x = WorldUtils.LastPlatformX;
+
+        createFallingRock(false);
+        createFallingRock(true);
+
         for(int i = 1; i < Constants.PLATFORM_AMOUNT; i++){
 
             do { randShift = WorldUtils.generateRandomShift();
@@ -172,13 +189,17 @@ public class GameStage extends Stage implements ContactListener {
             platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
             addActor(platforms.get(platforms.size - 1));
         }
-        // TODO: Reset positions of PlatformType
+      //  System.out.println("X: " + x);
+        spikes = new SpikeGround(WorldUtils.createSpikes(world, x, WorldUtils.LastPlatformX));
+        addActor(spikes);
 
+        PlatformType.reset();
 
     }
-    private void createFallingRock() {
-        Rock = new FallingRock(WorldUtils.createFallingRock(world));
-        addActor(Rock);
+
+    private void createFallingRock(boolean next) {
+        rocks.add(new FallingRock(WorldUtils.createFallingRock(world, next)));
+        addActor(rocks.get(rocks.size-1));
     }
 
     private void createBullet() {
@@ -233,6 +254,28 @@ public class GameStage extends Stage implements ContactListener {
         }
 
 
+        // Spikes
+
+        if(toBeDeleted.contains(spikes.getBody(), false)){
+            spikes.getBody().setUserData(null);
+            spikes.addAction(Actions.removeActor());
+            spikes.remove();
+        }
+        // ======= ROCKS =========
+        for(FallingRock rock : rocks) {
+            if (toBeDeleted.contains(rock.getBody(), false)) {
+                indexes.add(rocks.indexOf(rock, true));
+                rock.getBody().setUserData(null);
+                rock.addAction(Actions.removeActor());
+            }
+        }
+
+        for(int ind : indexes){
+           rocks.get(ind).remove();
+           rocks.removeIndex(ind);
+        }
+        indexes.clear();
+
         // Runner
         if(toBeDeleted.contains(runner.getBody(), false)){
             runner.getBody().setUserData(null);
@@ -244,12 +287,7 @@ public class GameStage extends Stage implements ContactListener {
 
     }
 
-
-
-    @Override
-    public void draw() {
-        super.draw();
-
+    private void cleanWorld(){
         if(toBeDeleted.size > 0){
             removeEmptyActors();
             if(!world.isLocked()) {
@@ -262,31 +300,68 @@ public class GameStage extends Stage implements ContactListener {
             }
             toBeDeleted.clear();
         }
+    }
+
+    private void gameLoop() {
+        if(!world.isLocked() && levelPlatform){
+            createPlatforms();
+            levelPlatform = false;
+        }
+
+        if(emptyLevel() && canMakeEnemies()){
+            createEnemy();
+        }
+
+        if(emptyLevel() && !canMakeEnemies()){
+            makeEnemy = false;
+            levelPlatform = true;
+            countEnemies = 0;
+        }
+
+        if(!world.isLocked() && levelEnemy && canMakeEnemies()){
+            levelEnemy = false;
+        }
+
+
 
         if(!world.isLocked() && shoot){
             createBullet();
             shoot = false;
         }
 
-        if(!world.isLocked() && makeEnemy){
+        if(!world.isLocked() && makeEnemy && canMakeEnemies()){
             createEnemy();
             makeEnemy = false;
         }
 
         if(!world.isLocked() && gameOver){
             System.out.println("GAME OVER");
-            // GameManager.getInstance().submitScore(score.getScore());
             onGameOver();
         }
+    }
 
-        // Gdx.app.log("COUNT", "BULLETS: " + bullets.size);
-        // Gdx.app.log("COUNT", "BODIES: " + world.getBodyCount());
+
+    @Override
+    public void draw() {
+        super.draw();
+
+        cleanWorld();
+        gameLoop();
         renderer.render(world, camera.combined);
 
     }
 
+    private boolean canMakeEnemies() {
+        return countEnemies < Constants.ENEMY_AMOUNT && emptyLevel();
+    }
+
+    private boolean emptyLevel() {
+        return world.getBodyCount() == 4;
+    }
+
     private void onGameOver() {
         GameManager.getInstance().setGameState(GameState.OVER);
+        ((Game)Gdx.app.getApplicationListener()).setScreen(new Menu(game));
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
@@ -331,6 +406,15 @@ public class GameStage extends Stage implements ContactListener {
         } else if(BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b)){
             runner.hit();
             toBeDeleted.add(b);
+        } else if(BodyUtils.bodyIsRock(b) && BodyUtils.bodyIsRunner(a)){
+            runner.hit();
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsSpikes(b)){
+            runner.hit();
+            toBeDeleted.add(a);
+        } else if(BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsSpikes(b)){
+            runner.hit();
+            toBeDeleted.add(b);
         } else if((BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsGround(b)) ||
                 (BodyUtils.bodyIsGround(a) && BodyUtils.bodyIsRunner(b))) {
             runner.landed();
@@ -338,7 +422,7 @@ public class GameStage extends Stage implements ContactListener {
                 (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
             runner.platform();
             runner.landed();
-            System.out.println("LANDED ON PLATFORM");
+//            System.out.println("LANDED ON PLATFORM");
         }
         else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
             toBeDeleted.add(a);

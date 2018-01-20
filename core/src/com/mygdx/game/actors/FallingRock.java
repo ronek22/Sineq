@@ -29,7 +29,12 @@ public class FallingRock extends GameActor {
 
     public static int getRandom_x(){
         Random r = new Random();
-        return r.nextInt(10)+10 ;
+        return r.nextInt(3)+4;
     }
+
+    public Body getBody(){
+        return body;
+    }
+
 
 }
