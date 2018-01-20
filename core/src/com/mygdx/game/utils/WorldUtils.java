@@ -177,7 +177,7 @@ public class WorldUtils {
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         int x;
         if(next) x = FallingRock.getRandom_x();
-        else x = FallingRock.getRandom_x() + 10;
+        else x = FallingRock.getRandom_x() + 5;
         bodyDef.position.set(new Vector2(x, Constants.FALLING_ROCK_Y));
         CircleShape shape = new CircleShape();
         shape.setRadius(0.3f);
