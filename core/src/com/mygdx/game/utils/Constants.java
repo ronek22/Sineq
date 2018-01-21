@@ -10,6 +10,7 @@ public class Constants {
 
     public static final int APP_WIDTH = 800;
     public static final int APP_HEIGHT = 480;
+    public static final float WORLD_TO_SCREEN = 32;
 
     public static final Vector2 WORLD_GRAVITY = new Vector2(0, -10);
 
@@ -74,6 +75,23 @@ public class Constants {
     //ASSETS
     public static final String FONT_NAME = "Rajdhani-Bold.ttf";
 
+    // TEXTURES
+    public static final String BACKGROUND_ASSETS_ID = "background";
 
+    public static final String RUNNER_ASSETS_ID = "runner";
+
+    public static final String PLATFORM_DEFAULT_TEXTURE = "platform_short";
+    public static final String PLATFORM_WIDE_TEXTURE = "platform_long";
+
+    public static final String RUNNING_SMALL_TEXTURE = "enemy_small";
+    public static final String RUNNING_BIG_TEXTURE = "enemy_big";
+
+
+    public static final String BACKGROUND_IMAGE_PATH = "background.png";
+    public static final String RUNNER_IMAGE_PATH = "runner.png";
+    public static final String PLATFORM_DEFAULT_IMAGE_PATH = "platform_short.png";
+    public static final String PLATFORM_WIDE_IMAGE_PATH = "platform_long.png";
+    public static final String RUNNING_SMALL_IMAGE_PATH = "enemy_small.png";
+    public static final String RUNNING_BIG_IMAGE_PATH = "enemy_big.png";
 
 }

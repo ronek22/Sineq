@@ -16,7 +16,10 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.mygdx.game.GameMain;
+import com.mygdx.game.actors.Background;
 import com.mygdx.game.actors.Bullet;
 import com.mygdx.game.actors.FallingRock;
 import com.mygdx.game.actors.Ground;
@@ -46,8 +49,8 @@ public class GameStage extends Stage implements ContactListener {
 
     // This will be our viewport measurements while working with the debug renderer
     GameMain game;
-    private static final int VIEWPORT_WIDTH = 20;
-    private static final int VIEWPORT_HEIGHT = 13;
+    private static final int VIEWPORT_WIDTH = Constants.APP_WIDTH;
+    private static final int VIEWPORT_HEIGHT = Constants.APP_HEIGHT;
 
     private World world;
     private Ground ground;
@@ -89,10 +92,9 @@ public class GameStage extends Stage implements ContactListener {
 
 
     public GameStage(GameMain game) {
+        super(new ScalingViewport(Scaling.stretch, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)));
         this.game = game;
-        GameManager.getInstance().setGameState(GameState.RUNNING);
-        GameManager.getInstance().setDifficulty(Difficulty.DIF_1);
-        setUpDifficulty();
+        setUpGame();
         setUpWorld();
         setUpCamera();
         setUpScore();
@@ -100,20 +102,29 @@ public class GameStage extends Stage implements ContactListener {
         renderer = new Box2DDebugRenderer();
     }
 
-    public void setUpDifficulty(){
+    public void setUpGame(){
+        GameManager.getInstance().setGameState(GameState.RUNNING);
+        GameManager.getInstance().setDifficulty(Difficulty.DIF_1);
+
         Difficulty current = GameManager.getInstance().getDifficulty();
 
         MAX_ENEMIES = current.getAmountEnemies();
         MAX_PLATFORM = current.getAmountPlatform();
+
     }
 
     private void setUpWorld(){
         world = WorldUtils.createWorld();
         world.setContactListener(this);
+        setUpBackground();
         setUpGround();
         setUpRunner();
         createWall();
 
+    }
+
+    private void setUpBackground(){
+        addActor(new Background());
     }
 
     private void setUpGround() {
@@ -236,11 +247,10 @@ public class GameStage extends Stage implements ContactListener {
         platforms.get(platforms.size - 1).getUserData().setLinearVelocity(
                 GameManager.getInstance().getDifficulty().getPlatformLinearVelocity()
         );
-        addActor(platforms.get(platforms.size - 1));
-        x = WorldUtils.LastPlatformX;
+        addActor(platforms.get(platforms.size - 1));        x = WorldUtils.LastPlatformX;
 
-        createFallingRock(false);
-        createFallingRock(true);
+//        createFallingRock(false);
+//        createFallingRock(true);
 
         for(int i = 1; i < MAX_PLATFORM; i++){
 
@@ -425,9 +435,9 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void onGameOver() {
-        GameManager.getInstance().setGameState(GameState.OVER);
-        GameManager.getInstance().submitScore(score.getScore());
-        ((Game)Gdx.app.getApplicationListener()).setScreen(new OverScreen(game, score.getScore()));
+//        GameManager.getInstance().setGameState(GameState.OVER);
+//        GameManager.getInstance().submitScore(score.getScore());
+//        ((Game)Gdx.app.getApplicationListener()).setScreen(new OverScreen(game, score.getScore()));
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
