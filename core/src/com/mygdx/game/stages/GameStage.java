@@ -1,7 +1,9 @@
 package com.mygdx.game.stages;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -170,6 +172,10 @@ public class GameStage extends Stage implements ContactListener {
         }
         System.out.println("SCORE: " + score.getScore());
 
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop){
+            controlDesktop(delta);
+        }
+
         //   System.out.println("BODIES: " + world.getBodyCount());
         if(!world.isLocked()){
             Array<Body> bodies = new Array<Body>(world.getBodyCount());
@@ -185,6 +191,9 @@ public class GameStage extends Stage implements ContactListener {
             world.step(TIME_STEP, 6, 2);
             accumulator -= TIME_STEP;
         }
+
+        cleanWorld();
+        gameLoop();
 
     }
 
@@ -402,9 +411,6 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void draw() {
         super.draw();
-
-        cleanWorld();
-        gameLoop();
         renderer.render(world, camera.combined);
 
     }
@@ -437,6 +443,17 @@ public class GameStage extends Stage implements ContactListener {
         }
 
         return super.touchDown(x, y, pointer, button);
+    }
+
+    public void controlDesktop(float dt){
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            runner.jump();
+        }
+        else if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            runner.move();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            shoot = true;
+        }
     }
 
     private boolean rightSideTouched(float x, float y) {
