@@ -46,6 +46,9 @@ public class AssetsManager {
         texturesMap.put(Constants.RUNNING_BIG_TEXTURE,
                 new TextureRegion(new Texture(Gdx.files.internal(Constants.RUNNING_BIG_IMAGE_PATH))));
 
+        // Bullet
+        texturesMap.put(Constants.BULLET_ASSETS_ID,
+                new TextureRegion(new Texture(Gdx.files.internal(Constants.BULLET_IMAGE_PATH))));
 
         // Fonts
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(Constants.FONT_NAME));
