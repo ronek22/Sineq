@@ -7,11 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 public class EnemyUserData extends UserData {
 
     private Vector2 linearVelocity;
+    private String texture;
 
-    public EnemyUserData(float width, float height) {
+    public EnemyUserData(float width, float height, String texture) {
         super(width, height);
         userDataType = UserDataType.ENEMY;
         linearVelocity = Constants.ENEMY_LINEAR_VELOCITY;
+        this.texture = texture;
     }
 
     public void setLinearVelocity(Vector2 linearVelocity) {
@@ -22,4 +24,7 @@ public class EnemyUserData extends UserData {
         return linearVelocity;
     }
 
+    public String getTexture() {
+        return texture;
+    }
 }
