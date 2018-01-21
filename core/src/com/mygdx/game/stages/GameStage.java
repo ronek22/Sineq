@@ -28,6 +28,7 @@ import com.mygdx.game.enums.Difficulty;
 import com.mygdx.game.enums.GameState;
 import com.mygdx.game.enums.PlatformType;
 import com.mygdx.game.screens.Menu;
+import com.mygdx.game.screens.OverScreen;
 import com.mygdx.game.utils.BodyUtils;
 import com.mygdx.game.utils.Constants;
 import com.mygdx.game.utils.GameManager;
@@ -425,7 +426,8 @@ public class GameStage extends Stage implements ContactListener {
 
     private void onGameOver() {
         GameManager.getInstance().setGameState(GameState.OVER);
-        ((Game)Gdx.app.getApplicationListener()).setScreen(new Menu(game));
+        GameManager.getInstance().submitScore(score.getScore());
+        ((Game)Gdx.app.getApplicationListener()).setScreen(new OverScreen(game, score.getScore()));
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
