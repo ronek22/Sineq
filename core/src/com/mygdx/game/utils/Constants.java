@@ -41,10 +41,10 @@ public class Constants {
     public static final float RUNNER_HIT_ANGULAR_IMPULSE = 10f;
 
     //WALL
-    public static final float WALL_HEIGHT = 5f;
+    public static final float WALL_HEIGHT = 6f;
     public static final float WALL_RIGHT_POSITION = 5f; //x
     public static final float WALL_LEFT_POSITION = 1.5f; //x
-    public static final int WALL_POSITION = 6; //y dla obu
+    public static final int WALL_POSITION = 7; //y dla obu
     public static final float WALL_WIDTH = 0.1f;
     public static float WALL_DENSITY = 0.5f;
 
