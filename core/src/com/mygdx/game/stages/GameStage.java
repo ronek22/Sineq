@@ -144,7 +144,10 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void setUpScore(){
-        score = new Score();
+        Rectangle scoreBounds = new Rectangle(getCamera().viewportWidth * 47 / 64,
+                getCamera().viewportHeight * 57 / 64, getCamera().viewportWidth / 4,
+                getCamera().viewportHeight / 8);
+        score = new Score(scoreBounds);
         addActor(score);
     }
 
@@ -435,9 +438,9 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void onGameOver() {
-//        GameManager.getInstance().setGameState(GameState.OVER);
-//        GameManager.getInstance().submitScore(score.getScore());
-//        ((Game)Gdx.app.getApplicationListener()).setScreen(new OverScreen(game, score.getScore()));
+        GameManager.getInstance().setGameState(GameState.OVER);
+        GameManager.getInstance().submitScore(score.getScore());
+        ((Game)Gdx.app.getApplicationListener()).setScreen(new OverScreen(game, score.getScore()));
     }
 
     public boolean touchDown(int x, int y, int pointer, int button) {
