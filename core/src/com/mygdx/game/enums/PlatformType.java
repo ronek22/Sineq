@@ -7,8 +7,8 @@ import com.mygdx.game.utils.Constants;
  */
 
 public enum PlatformType {
-    DEFAULT(2f, 0.5f, Constants.PLATFORM_X, Constants.PLATFORM_Y, Constants.PLATFORM_DENSITY, Constants.PLATFORM_FRICTION, 4f),
-    WIDE(4f, 0.5f, Constants.PLATFORM_X, Constants.PLATFORM_Y, Constants.PLATFORM_DENSITY, Constants.PLATFORM_FRICTION, 6f);
+    DEFAULT(2f, 0.5f, Constants.PLATFORM_X, Constants.PLATFORM_Y, Constants.PLATFORM_DENSITY, Constants.PLATFORM_FRICTION, 4f, Constants.PLATFORM_DEFAULT_TEXTURE),
+    WIDE(4f, 0.5f, Constants.PLATFORM_X, Constants.PLATFORM_Y, Constants.PLATFORM_DENSITY, Constants.PLATFORM_FRICTION, 6f, Constants.PLATFORM_WIDE_TEXTURE);
 
     private float width;
     private float height;
@@ -17,8 +17,9 @@ public enum PlatformType {
     private float density;
     private float friction;
     private float gap;
+    private String texture;
 
-    PlatformType(float width, float height, float x, float y, float density, float friction, float gap){
+    PlatformType(float width, float height, float x, float y, float density, float friction, float gap, String texture){
         this.width = width;
         this.height = height;
         this.x = x;
@@ -26,6 +27,7 @@ public enum PlatformType {
         this.density = density;
         this.friction = friction;
         this.gap = gap;
+        this.texture = texture;
     }
 
     public void setX(float x){
@@ -69,6 +71,10 @@ public enum PlatformType {
 
     public String getName() {
         return this.name();
+    }
+
+    public String getTexture() {
+        return texture;
     }
 
     public static void reset() {
