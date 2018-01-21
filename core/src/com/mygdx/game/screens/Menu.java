@@ -5,8 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.mygdx.game.GameMain;
 import com.mygdx.game.stages.GameStage;
+import com.mygdx.game.utils.AssetsManager;
+import com.mygdx.game.utils.GameManager;
 
 /**
  * Created by Marcin on 17.01.2018.
@@ -19,6 +22,7 @@ public class Menu implements Screen{
     Texture playButtonInactive;
     Texture exitButtonActive;
     Texture exitButtonInactive;
+    private BitmapFont score;
 
     public Menu(GameMain game){
         this.game = game;
@@ -26,6 +30,7 @@ public class Menu implements Screen{
         playButtonInactive = new Texture("play2.png");
         exitButtonActive = new Texture("exit.png");
         exitButtonInactive = new Texture("exit2.png");
+        score = AssetsManager.getSmallFont();
     }
 
     @Override
@@ -39,6 +44,7 @@ public class Menu implements Screen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         game.getBatch().begin();
+        score.draw(game.getBatch(), String.format("BEST SCORE: %d", GameManager.getInstance().getScore()), 500, 440);
 
         if(Gdx.input.getX() < 50 + 200 && Gdx.input.getX() > 50 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
             game.getBatch().draw(playButtonActive, 50, 200);
@@ -86,5 +92,6 @@ public class Menu implements Screen{
         playButtonInactive.dispose();
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
+        score.dispose();
     }
 }
