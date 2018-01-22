@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.mygdx.game.GameMain;
@@ -24,23 +27,24 @@ public class Menu implements Screen{
     private final int VIEWPORT_WIDTH = 800;
     private final int VIEWPORT_HEIGHT = 480;
 
-    GameMain game;
-    Texture playButtonActive;
-    Texture playButtonInactive;
-    Texture exitButtonActive;
-    Texture exitButtonInactive;
+    private GameMain game;
+    private TextureRegion playButton;
+    private TextureRegion exitButton;
+    private TextureRegion scoreButton;
+    private TextureRegion title;
     private OrthographicCamera camera;
     private ScalingViewport scalingViewport;
     private BitmapFont score;
+    private Vector3 touchPoint;
 
     public Menu(GameMain game){
         this.game = game;
         setUpCamera();
         scalingViewport = new ScalingViewport(Scaling.stretch, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
-        playButtonActive = new Texture("play.png");
-        playButtonInactive = new Texture("play2.png");
-        exitButtonActive = new Texture("exit.png");
-        exitButtonInactive = new Texture("exit2.png");
+        playButton = AssetsManager.getTextureRegion("playButton");
+        scoreButton = AssetsManager.getTextureRegion("scoreButton");
+        exitButton = AssetsManager.getTextureRegion("exitButton");
+        title = AssetsManager.getTextureRegion("titleLabel");
         score = AssetsManager.getSmallFont();
     }
 
@@ -60,25 +64,31 @@ public class Menu implements Screen{
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(250/255f, 247/255f, 240/255f, 1);
 
         game.getBatch().begin();
-        score.draw(game.getBatch(), String.format("BEST SCORE: %d", GameManager.getInstance().getScore()), 500, 440);
 
-        if(Gdx.input.getX() < 50 + 200 && Gdx.input.getX() > 50 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
-            game.getBatch().draw(playButtonActive, 50, 200);
+
+        touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(touchPoint);
+
+        game.getBatch().draw(playButton, 80, 133);
+        game.getBatch().draw(scoreButton, 298, 107);
+        game.getBatch().draw(exitButton, 596, 133);
+        game.getBatch().draw(title, 213, 384);
+
+        score.draw(game.getBatch(), String.format("%d", GameManager.getInstance().getScore()), 330, 225, 140, Align.center, true);
+
+
+        if(touchPoint.x < 80 + playButton.getTexture().getWidth() && touchPoint.x > 80 && touchPoint.y < 133 + playButton.getTexture().getHeight() && touchPoint.y > 133) {
             if(Gdx.input.isTouched()) {
                 game.setScreen(new GameScreen(game));
             }
-        }else {
-            game.getBatch().draw(playButtonInactive, 50, 200);
         }
-        if(Gdx.input.getX() < 550 + 200 && Gdx.input.getX() > 550 && Gdx.input.getY() < 270 && Gdx.input.getY() > 170) {
-            game.getBatch().draw(exitButtonActive, 550, 200);
+        if(touchPoint.x < 596 + exitButton.getTexture().getWidth() && touchPoint.x > 596 && touchPoint.y < 133 + exitButton.getTexture().getHeight() && touchPoint.y > 133) {
             if(Gdx.input.isTouched()) {
                 Gdx.app.exit();
             }
-        }else {
-            game.getBatch().draw(exitButtonInactive, 550, 200);
         }
         game.getBatch().end();
         camera.update();
@@ -89,6 +99,7 @@ public class Menu implements Screen{
     public void resize(int width, int height) {
         scalingViewport.update(width, height);
         game.getBatch().setProjectionMatrix(camera.combined);
+
     }
 
     @Override
@@ -108,10 +119,6 @@ public class Menu implements Screen{
 
     @Override
     public void dispose() {
-        playButtonActive.dispose();
-        playButtonInactive.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
         score.dispose();
     }
 }

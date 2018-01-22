@@ -50,21 +50,34 @@ public class AssetsManager {
         texturesMap.put(Constants.BULLET_ASSETS_ID,
                 new TextureRegion(new Texture(Gdx.files.internal(Constants.BULLET_IMAGE_PATH))));
 
+        // MENU TEXTURES
+        texturesMap.put("playButton",
+                new TextureRegion(new Texture(Gdx.files.internal("play.png"))));
+
+        texturesMap.put("exitButton",
+                new TextureRegion(new Texture(Gdx.files.internal("exit.png"))));
+
+        texturesMap.put("scoreButton",
+                new TextureRegion(new Texture(Gdx.files.internal("best.png"))));
+
+        texturesMap.put("titleLabel",
+                new TextureRegion(new Texture(Gdx.files.internal("title.png"))));
+
         // Fonts
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(Constants.FONT_NAME));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         parameter.size = 24;
         smallestFont = generator.generateFont(parameter);
-        smallestFont.setColor(.5f, .5f, .5f, 1f);
+        smallestFont.setColor(57/255f, 14/255f, 14/255f, 1f);
 
         parameter.size = 36;
         smallFont = generator.generateFont(parameter);
-        smallFont.setColor(.5f, .5f, .5f, 1f);
+        smallFont.setColor(57/255f, 14/255f, 14/255f, 1f);
 
         parameter.size = 72;
         largeFont = generator.generateFont(parameter);
-        largeFont.setColor(.5f, .5f, .5f, 1f);
+        largeFont.setColor(57/255f, 14/255f, 14/255f, 1f);
 
         generator.dispose();
     }
