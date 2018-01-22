@@ -151,7 +151,7 @@ public class WorldUtils {
         fixture.filter.maskBits = 1;
         fixture.filter.groupIndex = -1;
         body.createFixture(fixture);
-        body.setUserData(new SpikeGroundUserData((y-x) / 2, Constants.SPIKE_GROUND_HEIGHT));
+        body.setUserData(new SpikeGroundUserData((y-x), Constants.SPIKE_GROUND_HEIGHT * 2));
         shape.dispose();
         System.out.println("SPIKE: (" + body.getPosition().x + ", " + body.getPosition().y + ")");
         return body;

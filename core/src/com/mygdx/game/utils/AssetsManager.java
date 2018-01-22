@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 
 import java.util.HashMap;
 
@@ -14,6 +15,7 @@ import java.util.HashMap;
 
 public class AssetsManager {
     private static HashMap<String, TextureRegion> texturesMap = new HashMap<String, TextureRegion>();
+//    private static TiledDrawable tile;
     private static BitmapFont smallFont;
     private static BitmapFont smallestFont;
     private static BitmapFont largeFont;
@@ -91,6 +93,12 @@ public class AssetsManager {
 
         texturesMap.put("titleLabel",
                 new TextureRegion(new Texture(Gdx.files.internal("title.png"))));
+
+        // Spikes
+        texturesMap.put("spikes",
+                new TextureRegion(new Texture(Gdx.files.internal("spikes.png"))));
+
+//        tile = new TiledDrawable(getTextureRegion("spikes"));
 
         // Fonts
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(Constants.FONT_NAME));

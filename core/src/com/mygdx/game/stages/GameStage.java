@@ -249,7 +249,8 @@ public class GameStage extends Stage implements ContactListener {
         platforms.get(platforms.size - 1).getUserData().setLinearVelocity(
                 GameManager.getInstance().getDifficulty().getPlatformLinearVelocity()
         );
-        addActor(platforms.get(platforms.size - 1));        x = WorldUtils.LastPlatformX;
+        addActor(platforms.get(platforms.size - 1));
+        x = WorldUtils.LastPlatformX;
 
         createFallingRock(false);
         createFallingRock(true);
