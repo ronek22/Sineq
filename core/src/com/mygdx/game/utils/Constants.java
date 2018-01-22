@@ -48,7 +48,7 @@ public class Constants {
     public static final float WALL_WIDTH = 0.1f;
     public static float WALL_DENSITY = 0.5f;
 
-    public static final float PLATFORM_X = 17f;
+    public static final float PLATFORM_X = 22f;
     public static final float PLATFORM_Y = 2f;
     public static final float PLATFORM_RAND_DIFF = 2f;
     public static final int PLATFORM_AMOUNT = 10;
@@ -79,7 +79,15 @@ public class Constants {
     // TEXTURES
     public static final String BACKGROUND_ASSETS_ID = "background";
 
-    public static final String RUNNER_ASSETS_ID = "runner";
+    //RUNNER
+    public static final String RUNNER_ASSETS_ID_MOVE_FRAME1 = "runner_frame1";
+    public static final String RUNNER_ASSETS_ID_MOVE_FRAME2 = "runner_frame2";
+    public static final String RUNNER_ASSETS_ID_MOVE_FRAME3 = "runner_frame3";
+    public static final String RUNNER_ASSETS_ID_MOVE_FRAME4 = "runner_frame4";
+    public static final String RUNNER_ASSETS_ID_JUMP = "runner_jump";
+    public static final String RUNNER_ASSETS_ID_SHOOT = "runner_shoot";
+
+
     public static final String BULLET_ASSETS_ID = "bullet";
     public static final String FALLING_ROCK_ASSETS_ID = "falling_rock";
 
@@ -95,7 +103,19 @@ public class Constants {
 
 
     public static final String BACKGROUND_IMAGE_PATH = "background.png";
-    public static final String RUNNER_IMAGE_PATH = "runner.png";
+
+    //RUNNER
+
+    public static final String RUNNER_IMAGE_MOVE_FRAME1 = "frame1.png";
+    public static final String RUNNER_IMAGE_MOVE_FRAME2 = "frame2.png";
+    public static final String RUNNER_IMAGE_MOVE_FRAME3 = "frame3.png";
+    public static final String RUNNER_IMAGE_MOVE_FRAME4 = "frame4.png";
+    public static final String RUNNER_JUMP_IMAGE_PATH = "runner_jump.png";
+    public static final String RUNNER_SHOOT_IMAGE_PATH = "runner_shoot.png";
+
+
+
+
     public static final String PLATFORM_DEFAULT_IMAGE_PATH = "platform_short.png";
     public static final String PLATFORM_WIDE_IMAGE_PATH = "platform_long.png";
     public static final String FALLING_ROCK_IMAGE_PATH = "rock.png";
@@ -108,5 +128,7 @@ public class Constants {
     public static final String FLYING_SMALL_IMAGE_PATH = "enemy_flying_small.png";
 
     public static final String BULLET_IMAGE_PATH = "bullet.png";
+
+
 
 }

@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 public class AssetsManager {
     private static HashMap<String, TextureRegion> texturesMap = new HashMap<String, TextureRegion>();
-//    private static TiledDrawable tile;
     private static BitmapFont smallFont;
     private static BitmapFont smallestFont;
     private static BitmapFont largeFont;
@@ -30,8 +29,21 @@ public class AssetsManager {
                 new TextureRegion(new Texture(Gdx.files.internal(Constants.BACKGROUND_IMAGE_PATH))));
 
         // Runner
-        texturesMap.put(Constants.RUNNER_ASSETS_ID,
-                new TextureRegion((new Texture(Gdx.files.internal(Constants.RUNNER_IMAGE_PATH)))));
+        texturesMap.put(Constants.RUNNER_ASSETS_ID_MOVE_FRAME1,
+                new TextureRegion((new Texture(Gdx.files.internal(Constants.RUNNER_IMAGE_MOVE_FRAME1)))));
+        texturesMap.put(Constants.RUNNER_ASSETS_ID_MOVE_FRAME2,
+                new TextureRegion((new Texture(Gdx.files.internal(Constants.RUNNER_IMAGE_MOVE_FRAME2)))));
+        texturesMap.put(Constants.RUNNER_ASSETS_ID_MOVE_FRAME3,
+                new TextureRegion((new Texture(Gdx.files.internal(Constants.RUNNER_IMAGE_MOVE_FRAME3)))));
+        texturesMap.put(Constants.RUNNER_ASSETS_ID_MOVE_FRAME4,
+                new TextureRegion((new Texture(Gdx.files.internal(Constants.RUNNER_IMAGE_MOVE_FRAME4)))));
+
+
+
+        texturesMap.put(Constants.RUNNER_ASSETS_ID_JUMP,
+                new TextureRegion((new Texture(Gdx.files.internal(Constants.RUNNER_JUMP_IMAGE_PATH)))));
+        texturesMap.put(Constants.RUNNER_ASSETS_ID_SHOOT,
+                new TextureRegion((new Texture(Gdx.files.internal(Constants.RUNNER_SHOOT_IMAGE_PATH)))));
 
 
         // Platforms

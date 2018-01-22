@@ -3,6 +3,7 @@ package com.mygdx.game.actors;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.enums.Difficulty;
 import com.mygdx.game.physics.RunnerUserData;
 import com.mygdx.game.utils.AssetsManager;
@@ -18,11 +19,26 @@ public class Runner extends GameActor {
     private boolean hit;
     private boolean onPlatform;
     private boolean moving;
-    private TextureRegion runnerTexture;
+    private boolean shoot;
+    private int frame_counter = 0;
+    private int move_counter = 0;
+    private int counter = 0;
+    private TextureRegion runnerTextureJump;
+    private TextureRegion runnerTextureShoot;
+    private Array<TextureRegion> runnerTextureMove = new Array<TextureRegion>();
 
     public Runner(Body body){
         super(body);
-        runnerTexture = AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID);
+
+        runnerTextureJump = AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_JUMP);
+        runnerTextureShoot = AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_SHOOT);
+        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME1));
+        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME2));
+        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME3));
+        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME4));
+        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME3));
+        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME2));
+
     }
 
     @Override
@@ -33,9 +49,39 @@ public class Runner extends GameActor {
     @Override
     public void draw(Batch batch, float parentAlpha){
         super.draw(batch, parentAlpha);
-        batch.draw(runnerTexture, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
+        if(shoot){
+            if(counter > 20) {
+                shoot = false;
+                counter = 0;
+                batch.draw(runnerTextureShoot, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
+            }
+            else
+            {
+                batch.draw(runnerTextureShoot, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
+                counter++;
+            }
+
+        }else if(jumping)
+        {
+            batch.draw(runnerTextureJump, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
+        }
+        else
+        {
+            batch.draw(runnerTextureMove.get(move_counter), screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
+            if(frame_counter > 5) {
+                move_counter++;
+                frame_counter = 0;
+                if (move_counter == 5) move_counter = 0;
+            }
+            else frame_counter++;
+        }
+
+
     }
 
+    public void shoot(){
+        shoot = true;
+    }
 
     public void jump() {
         if(!jumping){
@@ -64,6 +110,7 @@ public class Runner extends GameActor {
         return body.getPosition().x;
     }
     public float getY() { return body.getPosition().y; }
+
 
 
     public void hit() {
