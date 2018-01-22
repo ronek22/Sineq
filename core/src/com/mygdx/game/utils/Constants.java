@@ -86,14 +86,24 @@ public class Constants {
 
     public static final String RUNNING_SMALL_TEXTURE = "enemy_small";
     public static final String RUNNING_BIG_TEXTURE = "enemy_big";
+    public static final String RUNNING_WIDE_TEXTURE = "enemy_wide";
+    public static final String RUNNING_LONG_TEXTURE = "enemy_long";
+    public static final String FLYING_WIDE_TEXTURE = "enemy_flying_wide";
+    public static final String FLYING_SMALL_TEXTURE = "enemy_flying_small";
 
 
     public static final String BACKGROUND_IMAGE_PATH = "background.png";
     public static final String RUNNER_IMAGE_PATH = "runner.png";
     public static final String PLATFORM_DEFAULT_IMAGE_PATH = "platform_short.png";
     public static final String PLATFORM_WIDE_IMAGE_PATH = "platform_long.png";
+
     public static final String RUNNING_SMALL_IMAGE_PATH = "enemy_small.png";
     public static final String RUNNING_BIG_IMAGE_PATH = "enemy_big.png";
+    public static final String RUNNING_WIDE_IMAGE_PATH = "enemy_wide.png";
+    public static final String RUNNING_LONG_IMAGE_PATH = "enemy_long.png";
+    public static final String FLYING_WIDE_IMAGE_PATH = "enemy_flying_wide.png";
+    public static final String FLYING_SMALL_IMAGE_PATH = "enemy_flying_small.png";
+
     public static final String BULLET_IMAGE_PATH = "bullet.png";
 
 }
