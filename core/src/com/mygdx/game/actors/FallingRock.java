@@ -45,7 +45,7 @@ public class FallingRock extends GameActor {
 
     public void draw(Batch batch, float parentAlpha){
         super.draw(batch, parentAlpha);
-        batch.draw(rockTexture, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
+        batch.draw(rockTexture, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth() /2, screenRectangle.getHeight() / 2, screenRectangle.getWidth(), screenRectangle.getHeight(), 1, 1, body.getAngle() * 180 / (float) Math.PI);
     }
 
 

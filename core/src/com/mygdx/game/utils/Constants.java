@@ -60,6 +60,7 @@ public class Constants {
     public static final Vector2 FALLING_ROCK_LINEAR_VELOCITY = new Vector2(-1f, 0);
     public static final float FALLING_ROCK_GRAVITY_SCALE = 34f;
     public static final int FALLING_ROCK_Y = 15;
+    public static final float FALLING_ROCK_DIAMETER = 0.6f;
 
     //BULLETS
     public static final float BULLET_WIDTH = 0.2f;
