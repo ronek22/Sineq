@@ -1,7 +1,12 @@
 package com.mygdx.game.actors;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.mygdx.game.physics.FallingRockUserData;
+import com.mygdx.game.utils.AssetsManager;
+import com.mygdx.game.utils.Constants;
+
 import java.util.Random;
 
 /**
@@ -10,8 +15,10 @@ import java.util.Random;
 
 public class FallingRock extends GameActor {
 
+    private TextureRegion rockTexture;
     public FallingRock(Body body){
         super(body);
+        rockTexture = AssetsManager.getTextureRegion(Constants.FALLING_ROCK_ASSETS_ID);
     }
 
     public float getPosition(){
@@ -34,6 +41,11 @@ public class FallingRock extends GameActor {
 
     public Body getBody(){
         return body;
+    }
+
+    public void draw(Batch batch, float parentAlpha){
+        super.draw(batch, parentAlpha);
+        batch.draw(rockTexture, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth() /2, screenRectangle.getHeight() / 2, screenRectangle.getWidth(), screenRectangle.getHeight(), 1, 1, body.getAngle() * 180 / (float) Math.PI);
     }
 
 

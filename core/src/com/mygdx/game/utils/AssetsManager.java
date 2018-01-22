@@ -46,7 +46,23 @@ public class AssetsManager {
         texturesMap.put(Constants.RUNNING_BIG_TEXTURE,
                 new TextureRegion(new Texture(Gdx.files.internal(Constants.RUNNING_BIG_IMAGE_PATH))));
 
+        texturesMap.put(Constants.RUNNING_WIDE_TEXTURE,
+                new TextureRegion(new Texture(Gdx.files.internal(Constants.RUNNING_WIDE_IMAGE_PATH))));
+
+        texturesMap.put(Constants.RUNNING_LONG_TEXTURE,
+                new TextureRegion(new Texture(Gdx.files.internal(Constants.RUNNING_LONG_IMAGE_PATH))));
+
+        texturesMap.put(Constants.FLYING_WIDE_TEXTURE,
+                new TextureRegion(new Texture(Gdx.files.internal(Constants.FLYING_WIDE_IMAGE_PATH))));
+
+        texturesMap.put(Constants.FLYING_SMALL_TEXTURE,
+                new TextureRegion(new Texture(Gdx.files.internal(Constants.FLYING_SMALL_IMAGE_PATH))));
+
         // Bullet
+        texturesMap.put(Constants.FALLING_ROCK_ASSETS_ID,
+                new TextureRegion(new Texture(Gdx.files.internal(Constants.FALLING_ROCK_IMAGE_PATH))));
+
+        // Falling Rock
         texturesMap.put(Constants.BULLET_ASSETS_ID,
                 new TextureRegion(new Texture(Gdx.files.internal(Constants.BULLET_IMAGE_PATH))));
 

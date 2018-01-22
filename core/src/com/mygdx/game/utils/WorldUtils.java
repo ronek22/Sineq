@@ -191,7 +191,7 @@ public class WorldUtils {
         fixture.filter.groupIndex = -1;
         body.createFixture(fixture);
         body.resetMassData();
-        body.setUserData(new FallingRockUserData(Constants.RUNNER_WIDTH, Constants.RUNNER_HEIGHT));
+        body.setUserData(new FallingRockUserData(Constants.FALLING_ROCK_DIAMETER, Constants.FALLING_ROCK_DIAMETER));
         shape.dispose();
         return body;
     }
