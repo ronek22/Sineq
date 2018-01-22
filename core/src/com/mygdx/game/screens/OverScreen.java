@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.mygdx.game.GameMain;
@@ -24,6 +25,7 @@ public class OverScreen implements Screen {
     private int scoreValue;
     private OrthographicCamera camera;
     private ScalingViewport scalingViewport;
+    private Vector3 touchPoint;
 
     public OverScreen(GameMain game, int scoreValue){
         this.game = game;
@@ -49,7 +51,11 @@ public class OverScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        touchPoint = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        camera.unproject(touchPoint);
+
         game.getBatch().begin();
+
         title.draw(game.getBatch(), "GAME OVER", 220, 350);
         score.draw(game.getBatch(), String.format("%d", scoreValue), 370, 240);
         game.getBatch().end();

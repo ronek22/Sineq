@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 public class AssetsManager {
     private static HashMap<String, TextureRegion> texturesMap = new HashMap<String, TextureRegion>();
-//    private static TiledDrawable tile;
     private static BitmapFont smallFont;
     private static BitmapFont smallestFont;
     private static BitmapFont largeFont;

@@ -53,6 +53,7 @@ public class Runner extends GameActor {
             if(counter > 20) {
                 shoot = false;
                 counter = 0;
+                batch.draw(runnerTextureShoot, screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
             }
             else
             {
