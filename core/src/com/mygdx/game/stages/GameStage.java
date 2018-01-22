@@ -5,6 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -90,6 +91,8 @@ public class GameStage extends Stage implements ContactListener {
     private Score score;
     private float totalTimePassed;
 
+    private Matrix4 cameraBox2d;
+
 
     public GameStage(GameMain game) {
         super(new ScalingViewport(Scaling.stretch, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT)));
@@ -141,6 +144,8 @@ public class GameStage extends Stage implements ContactListener {
         camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0f);
         camera.update();
+        cameraBox2d = camera.combined.cpy();
+        cameraBox2d.scl(32f);
     }
 
     private void setUpScore(){
@@ -424,8 +429,8 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void draw() {
         super.draw();
-        renderer.render(world, camera.combined);
 
+        renderer.render(world, cameraBox2d);
     }
 
     private boolean canMakeEnemies() {
