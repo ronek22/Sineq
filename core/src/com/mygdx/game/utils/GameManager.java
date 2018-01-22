@@ -62,7 +62,7 @@ public class GameManager implements GameEventListener {
 
     @Override
     public void submitScore(int score) {
-        gameEventListener.submitScore(score);
+        saveScore(score);
     }
 
     private Preferences getPreferences() {
@@ -76,6 +76,11 @@ public class GameManager implements GameEventListener {
             preferences.putInteger(MAX_SCORE_PREFERENCE, score);
             preferences.flush();
         }
+    }
+
+    public int getScore(){
+        Preferences preferences = getPreferences();
+        return preferences.getInteger(MAX_SCORE_PREFERENCE, 0);
     }
 
     public boolean hasSavedMaxScore() {

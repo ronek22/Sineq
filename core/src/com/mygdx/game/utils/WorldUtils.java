@@ -65,7 +65,7 @@ public class WorldUtils {
         fix.density = platformType.getDensity();
         fix.friction = platformType.getFriction();
         body.createFixture(fix);
-        PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight());
+        PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight(), platformType.getTexture());
         System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().y + ") : " + platformType.getName());
         LastPlatformY = body.getPosition().y;
         LastPlatformX = body.getPosition().x - platformType.getWidth() / 2;
@@ -166,7 +166,7 @@ public class WorldUtils {
         Body body = world.createBody(bodyDef);
         body.createFixture(shape, enemyType.getDensity());
         body.resetMassData();
-        EnemyUserData userData = new EnemyUserData(enemyType.getWidth(), enemyType.getHeight());
+        EnemyUserData userData = new EnemyUserData(enemyType.getWidth(), enemyType.getHeight(), enemyType.getTexture());
         body.setUserData(userData);
         shape.dispose();
         return body;
