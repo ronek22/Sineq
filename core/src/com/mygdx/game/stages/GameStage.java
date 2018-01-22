@@ -64,7 +64,6 @@ public class GameStage extends Stage implements ContactListener {
     private float accumulator = 0f;
 
     private OrthographicCamera camera;
-    private Box2DDebugRenderer renderer;
 
     // for controls
     private Rectangle screenRightSide;
@@ -99,7 +98,6 @@ public class GameStage extends Stage implements ContactListener {
         setUpCamera();
         setUpScore();
         setupTouchControlAreas();
-        renderer = new Box2DDebugRenderer();
     }
 
     public void setUpGame(){
@@ -425,8 +423,6 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void draw() {
         super.draw();
-        renderer.render(world, camera.combined);
-
     }
 
     private boolean canMakeEnemies() {
