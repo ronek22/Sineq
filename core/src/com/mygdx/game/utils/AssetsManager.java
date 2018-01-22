@@ -59,6 +59,10 @@ public class AssetsManager {
                 new TextureRegion(new Texture(Gdx.files.internal(Constants.FLYING_SMALL_IMAGE_PATH))));
 
         // Bullet
+        texturesMap.put(Constants.FALLING_ROCK_ASSETS_ID,
+                new TextureRegion(new Texture(Gdx.files.internal(Constants.FALLING_ROCK_IMAGE_PATH))));
+
+        // Falling Rock
         texturesMap.put(Constants.BULLET_ASSETS_ID,
                 new TextureRegion(new Texture(Gdx.files.internal(Constants.BULLET_IMAGE_PATH))));
 

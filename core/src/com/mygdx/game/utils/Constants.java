@@ -80,6 +80,7 @@ public class Constants {
 
     public static final String RUNNER_ASSETS_ID = "runner";
     public static final String BULLET_ASSETS_ID = "bullet";
+    public static final String FALLING_ROCK_ASSETS_ID = "falling_rock";
 
     public static final String PLATFORM_DEFAULT_TEXTURE = "platform_short";
     public static final String PLATFORM_WIDE_TEXTURE = "platform_long";
@@ -96,6 +97,7 @@ public class Constants {
     public static final String RUNNER_IMAGE_PATH = "runner.png";
     public static final String PLATFORM_DEFAULT_IMAGE_PATH = "platform_short.png";
     public static final String PLATFORM_WIDE_IMAGE_PATH = "platform_long.png";
+    public static final String FALLING_ROCK_IMAGE_PATH = "rock.png";
 
     public static final String RUNNING_SMALL_IMAGE_PATH = "enemy_small.png";
     public static final String RUNNING_BIG_IMAGE_PATH = "enemy_big.png";

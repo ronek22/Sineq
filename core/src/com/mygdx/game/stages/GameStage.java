@@ -251,8 +251,8 @@ public class GameStage extends Stage implements ContactListener {
         );
         addActor(platforms.get(platforms.size - 1));        x = WorldUtils.LastPlatformX;
 
-//        createFallingRock(false);
-//        createFallingRock(true);
+        createFallingRock(false);
+        createFallingRock(true);
 
         for(int i = 1; i < MAX_PLATFORM; i++){
 
