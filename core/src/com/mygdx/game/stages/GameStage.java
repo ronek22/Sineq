@@ -454,6 +454,7 @@ public class GameStage extends Stage implements ContactListener {
             runner.move();
         } else if (leftBottomSideTouched(touchPoint.x, touchPoint.y)) {
             shoot = true;
+            runner.shoot();
         }
 
         return super.touchDown(x, y, pointer, button);
