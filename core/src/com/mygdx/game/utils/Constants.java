@@ -48,7 +48,7 @@ public class Constants {
     public static final float WALL_WIDTH = 0.1f;
     public static float WALL_DENSITY = 0.5f;
 
-    public static final float PLATFORM_X = 17f;
+    public static final float PLATFORM_X = 25f;
     public static final float PLATFORM_Y = 2f;
     public static final float PLATFORM_RAND_DIFF = 2f;
     public static final int PLATFORM_AMOUNT = 10;
