@@ -21,8 +21,6 @@ public class FallingRock extends GameActor {
         rockTexture = AssetsManager.getTextureRegion(Constants.FALLING_ROCK_ASSETS_ID);
     }
 
-
-
     public float getPosition(){
         return body.getPosition().x;
     }
