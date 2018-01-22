@@ -185,7 +185,6 @@ public class GameStage extends Stage implements ContactListener {
         if (GameManager.getInstance().getGameState() == GameState.RUNNING) {
             totalTimePassed += delta;
         }
-        System.out.println("SCORE: " + score.getScore());
 
         if(Gdx.app.getType() == Application.ApplicationType.Desktop){
             controlDesktop(delta);
