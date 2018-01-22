@@ -281,7 +281,6 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void createBullet() {
-        Gdx.app.log("Check Position of Runner", runner.getX() + " : " + runner.getY());
         bullets.add(new Bullet(WorldUtils.createBullet(world, runner.getX() + Constants.RUNNER_WIDTH, runner.getY())));
         addActor(bullets.get(bullets.size-1));
 
@@ -330,7 +329,6 @@ public class GameStage extends Stage implements ContactListener {
                 enemy.remove();
             }
         }
-
 
         // Spikes
 
@@ -414,7 +412,6 @@ public class GameStage extends Stage implements ContactListener {
         }
 
         if(!world.isLocked() && gameOver){
-            System.out.println("GAME OVER");
             onGameOver();
         }
     }
@@ -465,6 +462,7 @@ public class GameStage extends Stage implements ContactListener {
             runner.move();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             shoot = true;
+            runner.shoot();
         }
     }
 

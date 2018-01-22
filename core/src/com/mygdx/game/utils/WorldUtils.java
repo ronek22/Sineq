@@ -66,7 +66,6 @@ public class WorldUtils {
         fix.friction = platformType.getFriction();
         body.createFixture(fix);
         PlatformUserData userData = new PlatformUserData(platformType.getWidth(), platformType.getHeight(), platformType.getTexture());
-        System.out.println("PLATFORMA: (" + body.getPosition().x + ", " + body.getPosition().y + ") : " + platformType.getName());
         LastPlatformY = body.getPosition().y;
         LastPlatformX = body.getPosition().x - platformType.getWidth() / 2;
         LastPlatformType = platformType.getName();
@@ -153,7 +152,6 @@ public class WorldUtils {
         body.createFixture(fixture);
         body.setUserData(new SpikeGroundUserData((y-x), Constants.SPIKE_GROUND_HEIGHT * 2));
         shape.dispose();
-        System.out.println("SPIKE: (" + body.getPosition().x + ", " + body.getPosition().y + ")");
         return body;
     }
     public static Body createEnemy(World world) {
