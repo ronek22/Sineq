@@ -87,7 +87,6 @@ public class GameStage extends Stage implements ContactListener {
     private int MAX_PLATFORM;
     private int MAX_ENEMIES;
     private Score score;
-    private float totalTimePassed;
 
 
     public GameStage(GameMain game) {
@@ -178,30 +177,27 @@ public class GameStage extends Stage implements ContactListener {
     @Override
     public void act(float delta) {
         super.act(delta);
-        if (GameManager.getInstance().getGameState() == GameState.PAUSED) return;
-
-        if (GameManager.getInstance().getGameState() == GameState.RUNNING) {
-            totalTimePassed += delta;
-        }
-
-        if(Gdx.app.getType() == Application.ApplicationType.Desktop){
-            controlDesktop(delta);
-        }
-
-        //   System.out.println("BODIES: " + world.getBodyCount());
-        if(!world.isLocked()){
-            Array<Body> bodies = new Array<Body>(world.getBodyCount());
-            world.getBodies(bodies);
-            for(Body body : bodies){
-                update(body);
-            }
-        }
 
         accumulator += delta;
 
         while (accumulator >= delta) {
             world.step(TIME_STEP, 6, 2);
             accumulator -= TIME_STEP;
+        }
+
+        if (GameManager.getInstance().getGameState() == GameState.PAUSED) return;
+
+
+        if(Gdx.app.getType() == Application.ApplicationType.Desktop){
+            controlDesktop(delta);
+        }
+
+        if(!world.isLocked()){
+            Array<Body> bodies = new Array<Body>(world.getBodyCount());
+            world.getBodies(bodies);
+            for(Body body : bodies){
+                update(body);
+            }
         }
 
         cleanWorld();
@@ -289,6 +285,22 @@ public class GameStage extends Stage implements ContactListener {
     private void removeEmptyActors(){
 
 
+        // Runner
+        if(toBeDeleted.contains(runner.getBody(), false)){
+            runner.getBody().setUserData(null);
+            runner.addAction(Actions.removeActor());
+            runner.remove();
+            gameOver = true;
+        }
+
+        // ===== ENEMY ==========
+        if(enemy != null) {
+            if(toBeDeleted.contains(enemy.getBody(), false)){
+                enemy.getBody().setUserData(null);
+                enemy.addAction(Actions.removeActor());
+                enemy.remove();
+            }
+        }
 
         // ====== BULLETS =========
         Array<Integer> indexes = new Array<Integer>();
@@ -300,6 +312,7 @@ public class GameStage extends Stage implements ContactListener {
             }
         }
 
+        // tu mamy jakis blad nie nadazy usuwac pociskow
         for(int ind : indexes){
             bullets.get(ind).remove();
             bullets.removeIndex(ind);
@@ -321,14 +334,7 @@ public class GameStage extends Stage implements ContactListener {
         }
         indexes.clear();
 
-        // ===== ENEMY ==========
-        if(enemy != null) {
-            if(toBeDeleted.contains(enemy.getBody(), false)){
-                enemy.getBody().setUserData(null);
-                enemy.addAction(Actions.removeActor());
-                enemy.remove();
-            }
-        }
+
 
         // Spikes
 
@@ -352,13 +358,7 @@ public class GameStage extends Stage implements ContactListener {
         }
         indexes.clear();
 
-        // Runner
-        if(toBeDeleted.contains(runner.getBody(), false)){
-            runner.getBody().setUserData(null);
-            runner.addAction(Actions.removeActor());
-            runner.remove();
-            gameOver = true;
-        }
+
 
 
     }
@@ -379,6 +379,11 @@ public class GameStage extends Stage implements ContactListener {
     }
 
     private void gameLoop() {
+
+        if(!world.isLocked() && gameOver){
+            onGameOver();
+        }
+
         if(!world.isLocked() && levelPlatform){
             createPlatforms();
             levelPlatform = false;
@@ -411,9 +416,7 @@ public class GameStage extends Stage implements ContactListener {
             makeEnemy = false;
         }
 
-        if(!world.isLocked() && gameOver){
-            onGameOver();
-        }
+
     }
 
 
@@ -485,11 +488,9 @@ public class GameStage extends Stage implements ContactListener {
         Body a = contact.getFixtureA().getBody();
         Body b = contact.getFixtureB().getBody();
 
-        if (BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b)) {
-            runner.hit();
+        if (BodyUtils.bodyIsRunner(a) && BodyUtils.bodyIsEnemy(b) ||
+                (BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b))) {
             toBeDeleted.add(a);
-        } else if(BodyUtils.bodyIsEnemy(a) && BodyUtils.bodyIsRunner(b)){
-            runner.hit();
             toBeDeleted.add(b);
         } else if(BodyUtils.bodyIsRock(b) && BodyUtils.bodyIsRunner(a)){
             runner.hit();
@@ -507,7 +508,6 @@ public class GameStage extends Stage implements ContactListener {
                 (BodyUtils.bodyIsPlatform(a) && BodyUtils.bodyIsEnemy(a))){
             runner.platform();
             runner.landed();
-//            System.out.println("LANDED ON PLATFORM");
         }
         else if((BodyUtils.bodyIsBullet(a) && BodyUtils.bodyIsPlatform(b))){
             toBeDeleted.add(a);

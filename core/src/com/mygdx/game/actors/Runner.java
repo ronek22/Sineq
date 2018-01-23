@@ -25,20 +25,12 @@ public class Runner extends GameActor {
     private int counter = 0;
     private TextureRegion runnerTextureJump;
     private TextureRegion runnerTextureShoot;
-    private Array<TextureRegion> runnerTextureMove = new Array<TextureRegion>();
 
     public Runner(Body body){
         super(body);
 
         runnerTextureJump = AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_JUMP);
         runnerTextureShoot = AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_SHOOT);
-        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME1));
-        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME2));
-        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME3));
-        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME4));
-        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME3));
-        runnerTextureMove.add(AssetsManager.getTextureRegion(Constants.RUNNER_ASSETS_ID_MOVE_FRAME2));
-
     }
 
     @Override
@@ -67,7 +59,7 @@ public class Runner extends GameActor {
         }
         else
         {
-            batch.draw(runnerTextureMove.get(move_counter), screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
+            batch.draw(AssetsManager.getAnimation(move_counter), screenRectangle.x, screenRectangle.y, screenRectangle.getWidth(), screenRectangle.getHeight());
             if(frame_counter > 5) {
                 move_counter++;
                 frame_counter = 0;
@@ -142,6 +134,8 @@ public class Runner extends GameActor {
     public Body getBody(){
         return body;
     }
+
+
 
 
 
