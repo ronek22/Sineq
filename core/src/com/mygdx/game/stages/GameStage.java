@@ -252,7 +252,7 @@ public class GameStage extends Stage implements ContactListener {
         for(int i = 1; i < MAX_PLATFORM; i++){
 
             do { randShift = WorldUtils.generateRandomShift();
-            }while((randShift + LastPlatformY ) < 2);
+            }while((randShift + LastPlatformY ) < 2f || (randShift + LastPlatformY) > 13f);
 
             platforms.add(new Platform(WorldUtils.createPlatform(world, randShift)));
             platforms.get(platforms.size - 1).getUserData().setLinearVelocity(
