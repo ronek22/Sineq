@@ -23,7 +23,7 @@ Poruszanie: lewy górny róg ekranu
 Skok: prawa część ekranu
 Strzał: lewy dolny róg ekranu
 
-##Wygląd:
+## Wygląd:
 <img src="https://hostmat.eu/images/84904748707526618640.png" width="800" alt="main_screen">
 <img src="https://hostmat.eu/images/98914523429191188607.png" width="800" alt="main_screen">
 
