@@ -19,12 +19,13 @@ Windows: Należy projekt zaimportować do Android Studio, skonfigurować i uruch
 Android: Pobrać plik .apk <a href="#">stąd</a>
 
 ## Sterowanie:
-Poruszanie: lewy górny róg ekranu
-Skok: prawa część ekranu
-Strzał: lewy dolny róg ekranu
+- Poruszanie: lewy górny róg ekranu
+- Skok: prawa część ekranu
+- Strzał: lewy dolny róg ekranu
 
 ## Wygląd:
-<img src="https://hostmat.eu/images/84904748707526618640.png" width="800" alt="main_screen">
 <img src="https://hostmat.eu/images/98914523429191188607.png" width="800" alt="main_screen">
+<img src="https://hostmat.eu/images/84904748707526618640.png" width="800" alt="main_screen">
+
 
 
