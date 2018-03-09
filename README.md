@@ -16,7 +16,7 @@ Ponadto jako bazę wykorzystaliśmy rozwiązania Wiliama Mora - <a href="http://
 
 ## Jak grać:
 Windows: Należy projekt zaimportować do Android Studio, skonfigurować i uruchomić za pomocą Desktop Lunchera.
-Android: Pobrać plik .apk <a href="#">stąd</a>
+Android: Pobrać plik .apk <a href="https://github.com/mikolaj-bronk/Sineq/tree/master/apk">stąd</a>
 
 ## Sterowanie:
 - Poruszanie: lewy górny róg ekranu
@@ -24,8 +24,8 @@ Android: Pobrać plik .apk <a href="#">stąd</a>
 - Strzał: lewy dolny róg ekranu
 
 ## Wygląd:
-<img src="https://hostmat.eu/images/98914523429191188607.png" width="800" alt="main_screen">
-<img src="https://hostmat.eu/images/84904748707526618640.png" width="800" alt="main_screen">
+<img src="https://mmiki26.nstrefa.pl/studia/sineq/1.png" width="800" alt="main_screen">
+<img src="https://mmiki26.nstrefa.pl/studia/sineq/2.png" width="800" alt="main_screen">
 
 
 
